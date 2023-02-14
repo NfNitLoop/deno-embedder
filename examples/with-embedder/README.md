@@ -26,9 +26,9 @@ You can run this example in a few ways:
 
 1. For local development, run `deno task dev` from this directory.
 
-2. You can also just `deno run https://url/to/this/server.ts`. 
-   (TODO: I should come back and add a working raw.githubusercontent.com or 
-   deno.land URL once this is available there.)
+2. You can also just:
+   `deno run https://deno.land/x/embedder/examples/with-embedder/server.ts`
+
 
 3. Check out this dir and run `deno task compile` to build a self-contained
    executable, then run that.
