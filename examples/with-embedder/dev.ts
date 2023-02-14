@@ -1,5 +1,5 @@
-import { devMode } from "https://deno.land/x/deno-embedder/mod.ts"
-import { ESBuild } from "https://deno.land/x/deno-embedder/plugins/esbuild.ts"
+import { devMode } from "../../mod.ts"
+import { ESBuild } from "../../plugins/esbuild.ts"
 
 
 await devMode({

@@ -1,4 +1,4 @@
-import { serveDir, oak } from "https://deno.land/x/deno-embedder/helpers/oak.ts"
+import { serveDir, oak } from "../../helpers/oak.ts"
 import * as staticFiles from "./embed/static/dir.ts"
 import * as bundledJs from "./embed/code/dir.ts"
 import sarcasm from "./browserCode/sarcasm.ts";

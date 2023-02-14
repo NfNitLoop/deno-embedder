@@ -18,10 +18,4 @@
         "compile": "deno compile --allow-net=0.0.0.0:8000 server.ts",
     },
 
-    // NOT necessary in your project.
-    "imports": {
-        // This is just here so that this example project uses local code
-        // instead of reaching out to deno.land:
-        "https://deno.land/x/deno-embedder/": "../../"
-    }
 }
