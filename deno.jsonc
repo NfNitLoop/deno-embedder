@@ -1,0 +1,14 @@
+{
+    "tasks": {
+        "test": "deno task check && deno test --allow-read",
+        "check": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts"
+    },
+    "lint": {
+        "rules": {
+            "exclude": [
+                // See: https://github.com/denoland/deno_lint/issues/1125
+                "prefer-const",
+            ]
+        }
+    },
+}

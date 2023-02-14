@@ -1,0 +1,27 @@
+{
+    "tasks": {
+        // This task starts Deno Embedder's "Dev Mode", which will watch for
+        // updates to your static files and regenerate the embedded versions
+        // as necessary.
+        // 
+        // Permissions:
+        // Deno Embedder needs read and write access to your project directory.
+        // It also needs access to run processes (ex: `deno task start`).
+        "dev": "deno run -A dev.ts",
+
+        // By default, Deno Embedder will call to your "start" task to
+        // run the server once it has created embedded versions of your files.
+        // It's recommended to use --watch here so that your server will restart
+        // if Deno Embed updates the embeds.
+        "start": "deno run --allow-net=0.0.0.0:8000 --watch server.ts",
+
+        "compile": "deno compile --allow-net=0.0.0.0:8000 server.ts",
+    },
+
+    // NOT necessary in your project.
+    "imports": {
+        // This is just here so that this example project uses local code
+        // instead of reaching out to deno.land:
+        "https://deno.land/x/deno-embedder/": "../../"
+    }
+}
