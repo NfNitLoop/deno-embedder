@@ -22,7 +22,7 @@ Main Features
  * Plugin for bundling static client-side code with ESBuild.
    * Write TypeScript, run it in the browser.
    * Can use the same TypeScript file in the browser and Deno (provided you 
-     don't use Deno-specific )
+     don't use anything Deno-specific.)
    * Any remote dependencies of your code are *automatically* bundled,
      efficiently and quickly from the Deno cache.
  * Utility for easily serving files from [Oak].
