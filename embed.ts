@@ -1,4 +1,9 @@
-// code used by the embedded files. Should keep this small
+/**
+ * Code in this module is used by embedded files/directories. You should not
+ * rely on it directly.
+ * 
+ * @module
+ */
 
 import * as b64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 
@@ -10,6 +15,9 @@ export const importMeta = import.meta
 
 const decoder = new TextDecoder()
 
+/**
+ * Represents the contents of a file that's been embedded into TypeScript.
+ */
 export class File {
     readonly size: number
     #encodedBytes: string;
@@ -37,6 +45,9 @@ export class File {
         return bytes
     }
 
+    /**
+     * Parse the bytes as utf-8 text.
+     */
     async text() {
         if (this.#cachedText === undefined) {
             this.#cachedText = decoder.decode(await this.bytes())
@@ -70,6 +81,7 @@ export class Directory {
         return null
     }
 
+    // TODO: IIRC, We don't embed directories anymore, so this is unused:
     // recursively map all file paths.
     private get flatMap(): Map<string,File|Directory> {
         if (this.#flatMap !== undefined) { return this.#flatMap }
@@ -91,7 +103,7 @@ export class Directory {
 export type DirectoryContents = Record<string, File|Directory>
 
 /**
- * The data we expect to find inside *_.ts files.
+ * The data we expect to find inside embedded *_.ts files.
  */
 interface FileMeta {
     size: number

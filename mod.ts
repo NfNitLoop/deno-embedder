@@ -1,3 +1,15 @@
+/**
+ * Deno Embedder
+ * =============
+ * 
+ * deno-embedder is a dev tool for embedding binary files into a Deno
+ * application as typescript code. 
+ * 
+ * See: <https://github.com/NfNitLoop/deno-embedder#readme>
+ * 
+ * @module
+ */
+
 import { debounce, deferred } from "https://deno.land/std@0.175.0/async/mod.ts";
 import * as path from "https://deno.land/std@0.175.0/path/mod.ts";
 import { exists } from "https://deno.land/std@0.175.0/fs/mod.ts";
@@ -6,11 +18,10 @@ import * as b64 from "https://deno.land/std@0.175.0/encoding/base64.ts";
 
 import * as embed from "./embed.ts"
 import type { FileEmitter, Plugin } from "./plugins/plugins.ts"
+import { recursiveReadDir } from "./_src/util.ts";
 
 
 const DIR_FILENAME = "dir.ts"
-
-// TODO: the github trick for generated files.
 
 export interface Mapping {
     /** A directory containing your static files. */
@@ -119,10 +130,6 @@ class EmbedWriter {
 
         let encoded = shouldCompress ? b64.encode(compressed) : b64.encode(data)
         encoded = encoded.replaceAll(/.{120}/g, (it) => it + "\n")
-
-        
-        // TODO: This is super basic to make a proof-of-concept. 
-        // Eventually we can add features like:
     
         let outLines = [
             `export default {`
@@ -253,26 +260,6 @@ async function compress(data: Uint8Array, compression: string): Promise<Uint8Arr
 
 
 
-async function * recursiveReadDir(dir: string): AsyncGenerator<Deno.DirEntry> {
-    for await (let entry of Deno.readDir(dir)) {
-        if (entry.isSymlink) {
-            console.warn(`Symlinks are unsupported: ${entry.name}`)
-            continue
-        }
-        if (entry.isFile) {
-            yield entry
-            continue
-        }
-        // entry.isDirectory
-        let dirName = entry.name
-        for await (let child of recursiveReadDir(path.join(dir, entry.name))) {
-            yield {
-                ...child,
-                name: path.join(dirName, child.name)
-            }
-        }
-    }
-}
 
 class PluginConverter implements Converter {
     #plugin: Plugin
@@ -346,10 +333,9 @@ function parentChild(parent: string, child: string): boolean {
 
     while (child.length > parent.length) {
         child = path.dirname(child)
-        if (child === parent) { return true }
     }
 
-    return false
+    return child === parent
 }
 
 
@@ -366,6 +352,7 @@ function converterFor(baseDir: string, opts: Mapping) {
     return new PluginConverter(opts)
 }
 
+// TODO: make a main() which can run either dev mode, check, or one convert.
 
 /**
  * Run your server in "dev mode", re-converting embedded files as they are changed.

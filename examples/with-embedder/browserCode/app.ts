@@ -4,7 +4,7 @@
 // Remote code will be cached and bundled so that it can be served locally w/o
 // any network requests.
 import sarcasm from "./sarcasm.ts"
-import confetti from "https://esm.sh/canvas-confetti@1.6.0"
+import { confetti } from "./deps.ts"
 
 
 

@@ -1,5 +1,7 @@
 /** 
  * Helper methods to easily serve embedded static files from Oak.
+ * 
+ * @module
  */
 import { lookup } from "https://deno.land/x/media_types@v2.10.2/mod.ts";
 import * as _oak from "https://deno.land/x/oak@v9.0.1/mod.ts";

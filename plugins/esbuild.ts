@@ -1,6 +1,7 @@
-import { Plugin as DenoCache, esbuild } from "./src/esbuild_deno_cache.ts"
+import { Plugin as DenoCache, esbuild } from "./_esbuild_deno_cache.ts"
 
 import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
+import { recursiveReadDir } from "../_src/util.ts"
 
 /**
  * Runs ESBuild on files before embedding them with ts-embed.
@@ -11,7 +12,7 @@ import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
 export class ESBuild implements WholeDirPlugin {
     readonly pluginType = "whole-dir"
 
-    #entryPoints: string[]|undefined
+    #entryPoints: string[]
     #platform: esbuild.Platform
     #format: esbuild.Format
     #bundleRemoteSources: boolean
@@ -26,8 +27,13 @@ export class ESBuild implements WholeDirPlugin {
     async convert(args: ConvertArgs): Promise<void> {
         let {destDir, sourceDir, emit} = args
 
-        if (!this.#entryPoints) {
-            throw new Error(`auto entrypoints TODO`)
+        let entryPoints = this.#entryPoints
+
+        if (!entryPoints) {
+            entryPoints = []
+            for await (let ep of recursiveReadDir(sourceDir)) {
+                entryPoints.push(ep.name)
+            }
         }
 
         let plugins = []
@@ -41,7 +47,7 @@ export class ESBuild implements WholeDirPlugin {
             // Lets source files (entryPoints) resolve relative to this dir.
             absWorkingDir: sourceDir,
 
-            entryPoints: this.#entryPoints,
+            entryPoints,
 
             // without bundle, local file imports won't be updated to .js.
             bundle: true, 
@@ -65,9 +71,11 @@ export class ESBuild implements WholeDirPlugin {
 
 export interface Args {
     /**
-     * TODO: If unspecified, every file in the source directory will be treated
-     * as an entrypoint.
+     * The javascript file(s) that get loaded by your web application.
      */
+    // Note: Not supporting auto-entrypoint discovery. 
+    // If we were to make every file in the directory an entrypoint,
+    // it would make most code unable to be tree-shaken.
     entryPoints: string[]
 
     // Default: "browser"
