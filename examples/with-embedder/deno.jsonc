@@ -7,15 +7,22 @@
         // Permissions:
         // Deno Embedder needs read and write access to your project directory.
         // It also needs access to run processes (ex: `deno task start`).
-        "dev": "deno run -A dev.ts",
+        "dev": "deno run -A embedder.ts dev --task start",
 
         // By default, Deno Embedder will call to your "start" task to
         // run the server once it has created embedded versions of your files.
         // It's recommended to use --watch here so that your server will restart
-        // if Deno Embed updates the embeds.
+        // if Deno Embedder updates the embeds.
         "start": "deno run --allow-net=0.0.0.0:8000 --watch server.ts",
 
+        // Since all your static files are now TypeScript code, they all get
+        // included in the bundle created by `deno compile`! 🎉
         "compile": "deno compile --allow-net=0.0.0.0:8000 server.ts",
+
+        // The simplest way to regenerate files is to just run your project in
+        // "dev" mode, above, but you also have the option to just do a one-off
+        // "build" of the embedded files like this:
+        "build-embeds": "deno run -A embedder.ts build"
     },
 
 }

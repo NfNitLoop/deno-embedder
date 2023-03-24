@@ -1,7 +1,7 @@
 // Thanks to https://github.com/jed/esbuild-plugin-http-fetch for a good pattern
 // to follow here!  :) 
 
-import * as esbuild from 'https://deno.land/x/esbuild@v0.17.5/mod.js'
+import * as esbuild from 'https://deno.land/x/esbuild@v0.17.12/mod.js'
 import { createCache } from "https://deno.land/x/deno_cache@0.4.1/mod.ts";
 
 export {esbuild}

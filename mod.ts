@@ -13,14 +13,16 @@
 import { debounce, deferred } from "https://deno.land/std@0.175.0/async/mod.ts";
 import * as path from "https://deno.land/std@0.175.0/path/mod.ts";
 import { exists } from "https://deno.land/std@0.175.0/fs/mod.ts";
-
 import * as b64 from "https://deno.land/std@0.175.0/encoding/base64.ts";
+
+import { Command } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
+
 
 import * as embed from "./embed.ts"
 import type { FileEmitter, Plugin } from "./plugins/plugins.ts"
 import { recursiveReadDir } from "./_src/util.ts";
 
-
+const VERSION = "1.0.0"
 const DIR_FILENAME = "dir.ts"
 
 export interface Mapping {
@@ -352,12 +354,82 @@ function converterFor(baseDir: string, opts: Mapping) {
     return new PluginConverter(opts)
 }
 
-// TODO: make a main() which can run either dev mode, check, or one convert.
+/**
+ * A `main()` function which you can configure and call to embed files into
+ * TypeScript code.
+ * 
+ * Supports "dev" and "build" subcommands.
+ * 
+ * For example, you can create an `embedder.ts` like:
+ * ```ts
+ * import * as embed from "./mod.ts" // NOTE: You'll use the full URL here. :)
+ * 
+ * let options: embed.DevOptions = {
+ *     importMeta: import.meta,
+ *     mappings: [{
+ *          sourceDir: "static",
+ *          destDir: "embed/static"
+ *     }]
+ * }
+ * 
+ * await embed.main({options})
+ * ```
+ * 
+ * Then you can use it from your deno tasks to do a one-off build or run in
+ * "dev mode".
+ */
+export async function main({options, args}: MainArgs) {
+    const devCommand = new Command()
+        .description("Runs \"dev mode\" which continually re-builds files.")
+        .option("--task <string>", "Name of the task to run in dev mode", {
+            default: options.mainTask ?? "start"
+        })
+        .action(async (cliOptions) => {
+            await devMode({
+                ...options,
+                ...{mainTask: cliOptions.task}
+            })
+        })
+
+    const buildCommand = new Command()
+        .description("Just creates embedded files once, then stops.")
+        .action(async () => {
+            await buildOnce(options)
+        })
+
+    const mainCommand = new Command()
+        .name("deno-embedder")
+        .version(VERSION)
+        .description("Embeds static files into TypeScript.")
+        .action(() => {
+            mainCommand.showHelp()
+            Deno.exit(1)
+        })
+        .command("dev", devCommand)
+        .command("build", buildCommand)
+    
+    await mainCommand.parse(args ?? Deno.args)
+}
+
+interface MainArgs {
+    options: DevOptions,
+
+    /**
+     * Arguments to pass to the invocation of main(). 
+     * 
+     * If unspecified, defaults to `Deno.args
+     */
+    args?: string[]
+}
+
 
 /**
  * Run your server in "dev mode", re-converting embedded files as they are changed.
  * 
  * This is expected to be the main way you generate embedded files.
+ * 
+ * @deprecated This function is exposed for backward compatibility, but you
+ * should prefer calling the {@link main} function instead.
  */
 export async function devMode(opts: DevOptions) {
     let baseDir = dirFrom(opts.importMeta)
@@ -379,11 +451,29 @@ export async function devMode(opts: DevOptions) {
     (async () => {
         let status = await proc.status()
         console.log(`task "${taskName}" exited with status: ${status.code}`)
+        // TODO: Clean way to shut down converters?
+        Deno.exit(status.code)
     })()
 
     for (let c of converters) {
         c.watch()
     }
+}
+
+/**
+ * Just do one round of creating embed files.
+ */
+async function buildOnce(opts: DevOptions) {
+    let baseDir = dirFrom(opts.importMeta)
+    let converters = opts.mappings.map( it => converterFor(baseDir, it))
+
+    console.log("Converting files...")
+    for (let c of converters) {
+        await c.clean()
+        await c.convert()
+    }
+    console.log("Done")
+    
 }
 
 /** Like Deno's watchFS, but will also fire an event once FS events have been quiet for a time */

@@ -1,6 +1,6 @@
 {
     "tasks": {
-        "test": "deno task check && deno test --allow-read",
+        "test": "deno task check && deno test --doc -A",
         "check": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts"
     },
     "lint": {

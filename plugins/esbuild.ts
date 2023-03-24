@@ -1,7 +1,6 @@
 import { Plugin as DenoCache, esbuild } from "./_esbuild_deno_cache.ts"
 
 import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
-import { recursiveReadDir } from "../_src/util.ts"
 
 /**
  * Runs ESBuild on files before embedding them with ts-embed.
@@ -27,27 +26,16 @@ export class ESBuild implements WholeDirPlugin {
     async convert(args: ConvertArgs): Promise<void> {
         let {destDir, sourceDir, emit} = args
 
-        let entryPoints = this.#entryPoints
-
-        if (!entryPoints) {
-            entryPoints = []
-            for await (let ep of recursiveReadDir(sourceDir)) {
-                entryPoints.push(ep.name)
-            }
-        }
-
         let plugins = []
         if (this.#bundleRemoteSources) {
             plugins.push(new DenoCache())
         }
 
-        // TODO: This requires holding all build results in memory.
-        // Maybe build to tempdir instead?
-        let build = await esbuild.build({
+        let options = {
             // Lets source files (entryPoints) resolve relative to this dir.
             absWorkingDir: sourceDir,
 
-            entryPoints,
+            entryPoints: this.#entryPoints,
 
             // without bundle, local file imports won't be updated to .js.
             bundle: true, 
@@ -57,7 +45,11 @@ export class ESBuild implements WholeDirPlugin {
             write: false,
             outdir: destDir,
             plugins
-        })
+        } as const
+
+        // TODO: This requires holding all build results in memory.
+        // Maybe build to tempdir instead?
+        let build = await esbuild.build(options)
 
         for (let outFile of build.outputFiles) {
             await emit({
@@ -65,6 +57,10 @@ export class ESBuild implements WholeDirPlugin {
                 contents: outFile.contents,
             })
         }
+
+        // esbuild seems to start a long-running process.  If you don't stop
+        // it, Deno waits around forever for it to finish, instead of exiting.
+        esbuild.stop()
     }
 
 }
