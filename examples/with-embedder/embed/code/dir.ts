@@ -1,8 +1,6 @@
-import {G} from "../../../../embed.ts"
+import {E} from "../../../../embed.ts"
 import f0 from "./app.js_.ts"
 
-const files = {
+export default E({
   "app.js": f0,
-} as const
-
-export const get = G(files)
+})

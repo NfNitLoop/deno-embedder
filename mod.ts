@@ -26,6 +26,9 @@ import { recursiveReadDir } from "./_src/util.ts";
 const VERSION = "1.0.0"
 const DIR_FILENAME = "dir.ts"
 
+/**
+ * Configures a mapping from an input "source" dir, to an output destination.
+ */
 export interface Mapping {
     /** A directory containing your static files. */
     sourceDir: string
@@ -164,10 +167,10 @@ class EmbedWriter {
         let files = await this.#readEmbeds()
 
         let imports = [
-            `import {G} from "${this.#relativeEmbedImport}"`
+            `import {E} from "${this.#relativeEmbedImport}"`
         ]
         let body = [
-            `const files = {`
+            `export default E({`
         ]
         files.forEach((file, index) => {
             let importName = `f${index}`
@@ -175,10 +178,9 @@ class EmbedWriter {
             body.push(`  "${file}": ${importName},`)
         })
 
-        body.push(`} as const`)
+        body.push(`})`)
 
         body.push("")
-        body.push(`export const get = G(files)`)
 
 
         let dirData = imports.join("\n") + "\n\n" + body.join("\n")

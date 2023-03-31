@@ -7,6 +7,10 @@
 
 import * as b64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 
+// This is a type, not a var. It's used in a JSDoc {@link} below.
+// deno-lint-ignore no-unused-vars
+import type { Mapping } from "./mod.ts"
+
 // All generated files will end in this, to make sure they can't conflict
 // w/ other files we may place in this directory, which won't end with this.
 export const GENERATED_SUFFIX = "_.ts"
@@ -115,4 +119,48 @@ export function G<T extends Record<string, File>>(files: T): (filePath: keyof T)
         return files[filePath]
     }
     return fn
+}
+
+/**
+ * Allows accessing all files embedded by a {@link Mapping}.
+ * 
+ * Each `dir.ts` in your Mapping `destDir` exposes an instance
+ * of this class as its default export.
+ */
+export class Embeds<T extends Record<string, File>> {
+    #embeds: T
+
+    constructor(embeds: T) {
+        this.#embeds = embeds
+    }
+
+    /**
+     * Type-safe method to load a known embed file.
+     * 
+     * If you know you need a particular embed at compile time, using this method
+     * lets TypeScript check that you have specified a correct (existing) file
+     * path.
+     */
+    // May eventually require async, so using async now:
+    // deno-lint-ignore require-await
+    async load(filePath: keyof T): Promise<File> {
+        return this.#embeds[filePath]
+    }
+
+    /**
+     * Method to do runtime loading of a file.
+     * 
+     * If you're loading user-specified file paths, use this method. It will
+     * return `null` if no such file exists.
+     */
+    // May eventually require async, so using async now:
+    // deno-lint-ignore require-await
+    async get(filePath: string): Promise<File|null> {
+        return this.#embeds[filePath] ?? null
+    }
+}
+
+/** Shortcut for `new Embeds(embeds)` */
+export function E<T extends Record<string, File>>(embeds: T): Embeds<T> {
+    return new Embeds(embeds)
 }

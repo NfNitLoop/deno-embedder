@@ -115,9 +115,9 @@ The first way gives you type-safe access to files. You'll get a TypeScript
 error if you try to access an embedded file that doesn't exist:
 
 ```ts
-import * as static from "./embed/static/dir.ts"
+import static from "./embed/static/dir.ts"
 
-let readme = await static.get("readme.md")  // Type checked. No typos! :) 
+let readme = await static.load("readme.md")  // Type checked. No typos! :) 
 
 console.log("readme.md:", await readme.text())
 ```
@@ -125,7 +125,7 @@ console.log("readme.md:", await readme.text())
 The second way does a runtime lookup and returns `null` if no such file exists.
 
 ```ts
-import * as static from "./embed/static/dir.ts"
+import static from "./embed/static/dir.ts"
 
 let fileName = Deno.args[0]
 let file = await static.dir.get(fileName)

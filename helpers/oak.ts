@@ -5,7 +5,7 @@
  */
 import { lookup } from "https://deno.land/x/media_types@v2.10.2/mod.ts";
 import * as _oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
-import { File } from "../embed.ts"
+import type { File, Embeds } from "../embed.ts"
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.
  * 
@@ -19,7 +19,7 @@ export const oak = _oak
  * 
  * Ex: `serveDir(router, "/static/", staticFiles)`
  */
-export function serveDir(router: _oak.Router, urlPath: string, mod: EmbedModule) {
+export function serveDir<T extends Record<string,File>>(router: _oak.Router, urlPath: string, embeds: Embeds<T>) {
     if (!urlPath.endsWith("/")) {
         throw new Error(`URL Path must end with "/":  ${urlPath}`)
     }
@@ -30,15 +30,8 @@ export function serveDir(router: _oak.Router, urlPath: string, mod: EmbedModule)
         if (filePath === undefined) {
             throw new Error("Expected to find pathPart, but was undefined")
         }
-        await serveFile(ctx, mod, filePath)
+        await serveFile(ctx, embeds, filePath)
     })
-}
-
-/** Functions provided by a `dir.ts` module. */
-export interface EmbedModule {
-
-    /** Look up a file at runtime. */
-    get(filePath: string): Promise<File|null>
 }
 
 /**
@@ -46,8 +39,12 @@ export interface EmbedModule {
  * 
  * Ex: `serveFile(ctx, staticFiles.dir, "foo/bar.txt")`
  */
-export async function serveFile(ctx: _oak.Context, mod: EmbedModule, filePath: string) {
-    let file = await mod.get(filePath)
+export async function serveFile<T extends Record<string,File>>(
+    ctx: _oak.Context,
+    embeds: Embeds<T>,
+    filePath: string
+) {
+    let file = await embeds.get(filePath)
     if (!file) {
         return // 404
     }
