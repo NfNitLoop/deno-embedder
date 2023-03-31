@@ -1,8 +1,9 @@
-import {F, D} from "../../../../embed.ts"
+import {D, G} from "../../../../embed.ts"
 import f0 from "./app.js_.ts"
 
-export const contents = {
-  "app.js": F(f0),
+const files = {
+  "app.js": f0,
 } as const
 
-export const dir = D(contents)
+export const dir = D(files)
+export const get = G(files)

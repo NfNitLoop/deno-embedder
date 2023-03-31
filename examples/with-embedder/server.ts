@@ -14,7 +14,7 @@ serveDir(router, "/code/", bundledJs.dir)
 
 router.get("/text", async (ctx) => {
     // Accessing files this way gets type-checked: (typo-checked?)
-    let file = staticFiles.contents["index.html"]
+    let file = await staticFiles.get("index.html")
     
     ctx.response.body = await file.bytes()
     ctx.response.headers.set("Content-Type", "text/plain")

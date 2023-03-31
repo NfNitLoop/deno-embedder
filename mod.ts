@@ -5,7 +5,8 @@
  * deno-embedder is a dev tool for embedding binary files into a Deno
  * application as typescript code. 
  * 
- * See: <https://github.com/NfNitLoop/deno-embedder#readme>
+ * For getting started documentation and examples, see:
+ * <https://github.com/NfNitLoop/deno-embedder#readme>
  * 
  * @module
  */
@@ -134,7 +135,8 @@ class EmbedWriter {
         encoded = encoded.replaceAll(/.{120}/g, (it) => it + "\n")
     
         let outLines = [
-            `export default {`
+            `import {F} from "${this.#relativeEmbedImport}"`,
+            `export default F({`
             , ` size: ${data.length},`
         ]
 
@@ -142,7 +144,7 @@ class EmbedWriter {
             outLines.push(` compression: "${compression}",`)
         } 
         outLines.push(` encoded: \`\n${encoded}\`,`)
-        outLines.push(`}`)
+        outLines.push(`})`)
         let outData = outLines.join("\n")
 
         let outPath = path.resolve(this.destDir, filePath + embed.GENERATED_SUFFIX)
@@ -162,21 +164,22 @@ class EmbedWriter {
         let files = await this.#readEmbeds()
 
         let imports = [
-            `import {F, D} from "${this.#relativeEmbedImport}"`
+            `import {D, G} from "${this.#relativeEmbedImport}"`
         ]
         let body = [
-            `export const contents = {`
+            `const files = {`
         ]
         files.forEach((file, index) => {
             let importName = `f${index}`
             imports.push(`import ${importName} from "./${file}${embed.GENERATED_SUFFIX}"`)
-            body.push(`  "${file}": F(${importName}),`)
+            body.push(`  "${file}": ${importName},`)
         })
 
         body.push(`} as const`)
 
         body.push("")
-        body.push(`export const dir = D(contents)`)
+        body.push(`export const dir = D(files)`)
+        body.push(`export const get = G(files)`)
 
 
         let dirData = imports.join("\n") + "\n\n" + body.join("\n")

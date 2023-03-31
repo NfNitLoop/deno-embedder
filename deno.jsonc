@@ -1,7 +1,8 @@
 {
     "tasks": {
-        "test": "deno task check && deno test --doc -A",
-        "check": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts"
+        "test": "deno task check && deno test --doc -A && deno task test-example",
+        "check": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
+        "test-example": "cd examples/with-embedder && deno check server.ts && deno test -A"
     },
     "lint": {
         "rules": {
@@ -11,4 +12,12 @@
             ]
         }
     },
+    "test": {
+        "files": {
+            "exclude": [
+                // Has example code that references theoretical modules:
+                "README.md"
+            ]
+        }
+    }
 }

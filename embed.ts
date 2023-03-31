@@ -60,47 +60,31 @@ export class File {
 
 /**
  * Utility functions for looking up files in this directory.
+ * 
+ * We may eventually add things like .search(), .list(), or .walk() here, so
+ * that you can more easily find things at runtime.
  */
 export class Directory {
     // Until TypeScript 5.0's const generics, we lose "as const" specificity here:
-    constructor(readonly contents: DirectoryContents) {}
+    constructor(private embeds: EmbedImports) {}
 
-    find(pathName: string): File|Directory|null {
-        return this.flatMap.get(pathName) ?? null
+    /**
+     * Get a file by its full path (relative within this embed directory).
+     */
+    // This may one day require async, so we use it now:
+    // deno-lint-ignore require-await
+    async get(filePath: string): Promise<File|null> {
+        return this.embeds[filePath] ?? null
     }
-
-    findFile(name: string) {
-        let obj = this.find(name)
-        if (obj instanceof File) return obj
-        return null
-    }
-
-    findDir(name: string) {
-        let obj = this.find(name)
-        if (obj instanceof Directory) return obj
-        return null
-    }
-
-    // TODO: IIRC, We don't embed directories anymore, so this is unused:
-    // recursively map all file paths.
-    private get flatMap(): Map<string,File|Directory> {
-        if (this.#flatMap !== undefined) { return this.#flatMap }
-        this.#flatMap = new Map()
-        for (let [name, obj] of Object.entries(this.contents)) {
-            this.#flatMap.set(name, obj)
-            if (obj instanceof Directory) {
-                for (let [innerName, innerObj] of obj.flatMap) {
-                    this.#flatMap.set(`${name}/${innerName}`, innerObj)
-                }
-            }
-        }
-
-        return this.#flatMap
-    }
-    #flatMap: Map<string,File|Directory> | undefined = undefined
 }
 
-export type DirectoryContents = Record<string, File|Directory>
+/**
+ * Embedder stores each file in its own _.ts file, and then lists them all in
+ * an object of this type:
+ */
+type EmbedImports = Readonly<Record<string, File>>
+
+
 
 /**
  * The data we expect to find inside embedded *_.ts files.
@@ -116,9 +100,11 @@ interface FileMeta {
     // TODO: sha256, modified time, etc.
 }
 
-// Shortcuts to save on file size:
+/** Shortcut for `new File(opts)` */
 export function F(opts: FileMeta) { return new File(opts) }
-export function D(opts: DirectoryContents) { return new Directory(opts) }
+
+/** Shortcut for `new Directory(opts) */
+export function D(opts: EmbedImports) { return new Directory(opts) }
 
 async function decompress(data: Uint8Array, compression: string): Promise<Uint8Array> {
     let input = new Blob([data])
@@ -136,4 +122,20 @@ async function decompress(data: Uint8Array, compression: string): Promise<Uint8A
 
     let buf = await new Blob(outParts).arrayBuffer()
     return new Uint8Array(buf)
+}
+
+/**
+ * Makes a type-safe get() function for a dir.ts.
+ * 
+ * You'll be able to call get(fileName), and the file names will be type-checked
+ * by TypeScript.
+ */
+export function G<T extends Record<string, File>>(files: T): (filePath: keyof T) => Promise<File> {
+    // This may one day require async for dynamic imports, so we'll require it
+    // now:
+    // deno-lint-ignore require-await
+    let fn = async (filePath: keyof T) => {
+        return files[filePath]
+    }
+    return fn
 }

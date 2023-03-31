@@ -1,4 +1,5 @@
-export default {
+import {F} from "../../../../embed.ts"
+export default F({
  size: 1120,
  compression: "gzip",
  encoded: `
@@ -8,4 +9,4 @@ SZQy8O8mxUH2NwBFLaTzC1xaXiuuP3shugFUXZIDgQrj4hTlj1laFBkBGcxyNs8pMIkbTA9GSicQ0FQb
 ZUY8MMoCo2xhdC0DeglvnGdvcN7+6SwEvbYS4kH4o/4H9yJZzrWolK208CRTJINtoUtytPp2xe98WmuesU9WlNJFi0JrxSybt7ic4nAXPJqptlUoYiG0Vr0T
 U6Wj+7nSUY6VRj2dSo6GzS8CPR/akLbDS3QBFva9qHhfEmuOXf0XWsyKEL4wGt9DGud8Axug07OBdYCZNJM4IrTpGu1aKyRuUxEYLO+cNPalJK7iWtxGDNhC
 7zqAC5I8QIlYChln6ziDaZrRpB4WW/vhVRZ5g9+n8P+A/U8AAAD//wMAlUvkH2AEAAA=`,
-}
+})

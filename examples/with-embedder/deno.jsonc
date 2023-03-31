@@ -17,12 +17,11 @@
 
         // Since all your static files are now TypeScript code, they all get
         // included in the bundle created by `deno compile`! 🎉
-        "compile": "deno compile --allow-net=0.0.0.0:8000 server.ts",
+        "compile": "deno compile server.ts",
 
         // The simplest way to regenerate files is to just run your project in
         // "dev" mode, above, but you also have the option to just do a one-off
         // "build" of the embedded files like this:
         "build-embeds": "deno run -A embedder.ts build"
-    },
-
+    }
 }

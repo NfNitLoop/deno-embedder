@@ -41,7 +41,7 @@ export function serveDir(router: _oak.Router, urlPath: string, dir: Directory) {
  * Ex: `serveFile(ctx, staticFiles.dir, "foo/bar.txt")`
  */
 export async function serveFile(ctx: _oak.Context, dir: Directory, filePath: string) {
-    let file = dir.findFile(filePath)
+    let file = await dir.get(filePath)
     if (!file) {
         return // 404
     }
