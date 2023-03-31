@@ -128,7 +128,7 @@ The second way does a runtime lookup and returns `null` if no such file exists.
 import static from "./embed/static/dir.ts"
 
 let fileName = Deno.args[0]
-let file = await static.dir.get(fileName)
+let file = await static.get(fileName)
 
 if (!file) {
     console.log("No such file:", fileName)
