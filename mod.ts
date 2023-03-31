@@ -415,7 +415,7 @@ export async function main({options, args}: MainArgs) {
     await mainCommand.parse(args ?? Deno.args)
 }
 
-interface MainArgs {
+export interface MainArgs {
     options: DevOptions,
 
     /**
@@ -431,11 +431,8 @@ interface MainArgs {
  * Run your server in "dev mode", re-converting embedded files as they are changed.
  * 
  * This is expected to be the main way you generate embedded files.
- * 
- * @deprecated This function is exposed for backward compatibility, but you
- * should prefer calling the {@link main} function instead.
  */
-export async function devMode(opts: DevOptions) {
+async function devMode(opts: DevOptions) {
     let baseDir = dirFrom(opts.importMeta)
     let taskName = opts.mainTask ?? "start"
 
