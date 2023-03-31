@@ -1,7 +1,7 @@
 1.0.0
 =====
 
-Released: TBD
+Released: March 31, 2023
 
 * ⚠️ Breaking API changes.  
   Lots of work here to really simplify and minimize the API surface area.
