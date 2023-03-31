@@ -59,26 +59,6 @@ export class File {
 }
 
 /**
- * Utility functions for looking up files in this directory.
- * 
- * We may eventually add things like .search(), .list(), or .walk() here, so
- * that you can more easily find things at runtime.
- */
-export class Directory {
-    // Until TypeScript 5.0's const generics, we lose "as const" specificity here:
-    constructor(private embeds: EmbedImports) {}
-
-    /**
-     * Get a file by its full path (relative within this embed directory).
-     */
-    // This may one day require async, so we use it now:
-    // deno-lint-ignore require-await
-    async get(filePath: string): Promise<File|null> {
-        return this.embeds[filePath] ?? null
-    }
-}
-
-/**
  * Embedder stores each file in its own _.ts file, and then lists them all in
  * an object of this type:
  */
@@ -102,9 +82,6 @@ interface FileMeta {
 
 /** Shortcut for `new File(opts)` */
 export function F(opts: FileMeta) { return new File(opts) }
-
-/** Shortcut for `new Directory(opts) */
-export function D(opts: EmbedImports) { return new Directory(opts) }
 
 async function decompress(data: Uint8Array, compression: string): Promise<Uint8Array> {
     let input = new Blob([data])

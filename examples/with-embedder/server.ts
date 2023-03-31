@@ -9,8 +9,8 @@ router.get("/", (ctx) => {
     ctx.response.redirect("/static/index.html")
 })
 
-serveDir(router, "/static/", staticFiles.dir)
-serveDir(router, "/code/", bundledJs.dir)
+serveDir(router, "/static/", staticFiles)
+serveDir(router, "/code/", bundledJs)
 
 router.get("/text", async (ctx) => {
     // Accessing files this way gets type-checked: (typo-checked?)

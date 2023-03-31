@@ -164,7 +164,7 @@ class EmbedWriter {
         let files = await this.#readEmbeds()
 
         let imports = [
-            `import {D, G} from "${this.#relativeEmbedImport}"`
+            `import {G} from "${this.#relativeEmbedImport}"`
         ]
         let body = [
             `const files = {`
@@ -178,7 +178,6 @@ class EmbedWriter {
         body.push(`} as const`)
 
         body.push("")
-        body.push(`export const dir = D(files)`)
         body.push(`export const get = G(files)`)
 
 

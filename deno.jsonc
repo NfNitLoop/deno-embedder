@@ -1,8 +1,15 @@
 {
     "tasks": {
-        "test": "deno task check && deno test --doc -A && deno task test-example",
-        "check": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
-        "test-example": "cd examples/with-embedder && deno check server.ts && deno test -A"
+        "test": "deno task check && deno test --doc -A && deno task example-test",
+
+        // Note: `deno check` without `--reload` can give wrong result. :( 
+        // See: https://github.com/denoland/deno/issues/18516
+        "check": "deno check --reload mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
+
+        "example-test": "cd examples/with-embedder && deno check --reload server.ts && deno test -A",
+        "example-build": "cd examples/with-embedder && deno run -A embedder.ts build",
+        "example-run": "cd examples/with-embedder && deno task dev"
+
     },
     "lint": {
         "rules": {
