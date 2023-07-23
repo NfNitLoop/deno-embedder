@@ -4,22 +4,24 @@
  * @module
  */
 import { lookup } from "https://deno.land/x/media_types@v2.10.2/mod.ts";
-import * as _oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
-import type { File, Embeds } from "../embed.ts"
+import * as oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
+
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.
  * 
  * If you prefer another version, you may use an import map to rewrite the
  * version used here. (But beware that if Oak changes interfaces, things may break!)
  */
-export const oak = _oak
+export * as oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
+
+import type { File, Embeds } from "../embed.ts"
 
 /**
  * Add an entry to `router` to serve static files.
  * 
  * Ex: `serveDir(router, "/static/", staticFiles)`
  */
-export function serveDir<T extends Record<string,File>>(router: _oak.Router, urlPath: string, embeds: Embeds<T>) {
+export function serveDir<T extends Record<string,File>>(router: oak.Router, urlPath: string, embeds: Embeds<T>) {
     if (!urlPath.endsWith("/")) {
         throw new Error(`URL Path must end with "/":  ${urlPath}`)
     }
@@ -40,7 +42,7 @@ export function serveDir<T extends Record<string,File>>(router: _oak.Router, url
  * Ex: `serveFile(ctx, staticFiles.dir, "foo/bar.txt")`
  */
 export async function serveFile<T extends Record<string,File>>(
-    ctx: _oak.Context,
+    ctx: oak.Context,
     embeds: Embeds<T>,
     filePath: string
 ) {
