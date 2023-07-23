@@ -4,7 +4,7 @@
  * @module
  */
 import { lookup } from "https://deno.land/x/media_types@v2.10.2/mod.ts";
-import * as oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import * as oak from "https://deno.land/x/oak@v12.6.0/mod.ts";
 
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.
@@ -12,7 +12,7 @@ import * as oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
  * If you prefer another version, you may use an import map to rewrite the
  * version used here. (But beware that if Oak changes interfaces, things may break!)
  */
-export * as oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
+export * as oak from "https://deno.land/x/oak@v12.6.0/mod.ts";
 
 import type { File, Embeds } from "../embed.ts"
 
