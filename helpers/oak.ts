@@ -27,12 +27,12 @@ export function serveDir<T extends Record<string,File>>(router: oak.Router, urlP
     }
 
     let routePath = `${urlPath}:pathPart(.*)`
-    router.get(routePath, async (ctx) => {
+    router.get(routePath, async (ctx, next) => {
         let filePath = ctx.params.pathPart
         if (filePath === undefined) {
             throw new Error("Expected to find pathPart, but was undefined")
         }
-        await serveFile(ctx, embeds, filePath)
+        await serveFile(ctx, embeds, filePath, next)
     })
 }
 
@@ -44,10 +44,14 @@ export function serveDir<T extends Record<string,File>>(router: oak.Router, urlP
 export async function serveFile<T extends Record<string,File>>(
     ctx: oak.Context,
     embeds: Embeds<T>,
-    filePath: string
+    filePath: string,
+    next?: () => Promise<unknown>,
 ) {
     let file = await embeds.get(filePath)
     if (!file) {
+        if (next) {
+            return next()
+        }
         return // 404
     }
 

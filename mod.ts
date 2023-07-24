@@ -136,9 +136,14 @@ class EmbedWriter {
 
         let encoded = shouldCompress ? b64.encode(compressed) : b64.encode(data)
         encoded = encoded.replaceAll(/.{120}/g, (it) => it + "\n")
+
+        const outPath = path.resolve(this.destDir, filePath + embed.GENERATED_SUFFIX)
+        if (!parentChild(this.destDir, outPath)) {
+            throw new Error(`${outPath} must be within ${this.destDir}`)
+        }
     
         let outLines = [
-            `import {F} from "${this.#relativeEmbedImport}"`,
+            `import {F} from "${relativeEmbedImport(outPath)}"`,
             `export default F({`
             , ` size: ${data.length},`
         ]
@@ -150,10 +155,7 @@ class EmbedWriter {
         outLines.push(`})`)
         let outData = outLines.join("\n")
 
-        let outPath = path.resolve(this.destDir, filePath + embed.GENERATED_SUFFIX)
-        if (!parentChild(this.destDir, outPath)) {
-            throw new Error(`${outPath} must be within ${this.destDir}`)
-        }
+
         await Deno.mkdir(path.dirname(outPath), {recursive: true})
         await Deno.writeTextFile(outPath, outData)
     }
@@ -166,8 +168,10 @@ class EmbedWriter {
     async writeDir(): Promise<void> {
         let files = await this.#readEmbeds()
 
+        const outPath = path.join(this.destDir, DIR_FILENAME)
+
         let imports = [
-            `import {E} from "${this.#relativeEmbedImport}"`
+            `import {E} from "${relativeEmbedImport(outPath)}"`
         ]
         let body = [
             `export default E({`
@@ -186,23 +190,10 @@ class EmbedWriter {
         let dirData = imports.join("\n") + "\n\n" + body.join("\n")
 
         // TODO: Is this atomic? If not, make one.
-        await Deno.writeTextFile(path.join(this.destDir, DIR_FILENAME), dirData)
+        await Deno.writeTextFile(outPath, dirData)
     }
 
-    // TODO: make module const.
-    get #relativeEmbedImport() {
-        let url = embed.importMeta.url
-        
-        // Use a relative posix import:
-        if (url.startsWith("file:"))
-        {
-            let dest = new URL(path.toFileUrl(this.destDir))
-            let meta = new URL(url)
-            return path.posix.relative(dest.pathname, meta.pathname)
-        }
-        
-        return url
-    }
+
 
     async #readEmbeds() {
 
@@ -244,6 +235,20 @@ class EmbedWriter {
         }
     }
 
+}
+
+function relativeEmbedImport(embedFilePath: string) {
+    const url = embed.importMeta.url
+    
+    // URLs are absolute, can be imported at the same path everywhere:
+    if (!url.startsWith("file:")) {
+        return url
+    }
+
+    // Else, use a relative file import. (Usually just for local testing/dev.)
+    let dest = new URL(path.toFileUrl(path.dirname(embedFilePath)))
+    let meta = new URL(url)
+    return path.posix.relative(dest.pathname, meta.pathname)
 }
 
 async function compress(data: Uint8Array, compression: string): Promise<Uint8Array> {
