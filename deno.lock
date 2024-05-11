@@ -42,6 +42,7 @@
       "jsr:@std/media-types": "jsr:@std/media-types@0.224.0",
       "jsr:@std/media-types@0.222": "jsr:@std/media-types@0.222.1",
       "jsr:@std/media-types@0.223": "jsr:@std/media-types@0.223.0",
+      "jsr:@std/media-types@0.224.0": "jsr:@std/media-types@0.224.0",
       "jsr:@std/path": "jsr:@std/path@0.225.0",
       "jsr:@std/path@0.223": "jsr:@std/path@0.223.0",
       "jsr:@std/path@0.225.0": "jsr:@std/path@0.225.0",
