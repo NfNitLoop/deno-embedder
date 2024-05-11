@@ -8,6 +8,8 @@
         // same permissions.  And this will work locally. But you've got an
         // implicit dependency on files in your static/ directory, so if you
         // move your binary, it won't work!
-        "compile": "deno compile --allow-net=0.0.0.0:8000 --allow-read server.ts"
+        "compile": "deno compile --allow-net=0.0.0.0:8000 --allow-read server.ts",
+
+        "check": "deno check server.ts"
     }
 }

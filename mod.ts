@@ -252,6 +252,8 @@ function relativeEmbedImport(embedFilePath: string) {
     return path.posix.relative(dest.pathname, meta.pathname)
 }
 
+type CompressionFormat = ConstructorParameters<typeof CompressionStream>[0]
+
 async function compress(data: Uint8Array, compression: CompressionFormat): Promise<Uint8Array> {
     let input = new Blob([data])
     let cs = new CompressionStream(compression)

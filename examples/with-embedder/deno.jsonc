@@ -22,6 +22,14 @@
         // The simplest way to regenerate files is to just run your project in
         // "dev" mode, above, but you also have the option to just do a one-off
         // "build" of the embedded files like this:
-        "build-embeds": "deno run -A embedder.ts build"
+        "build-embeds": "deno run -A embedder.ts build",
+
+        "check": "deno check server.ts browserCode/app.ts"
+    },
+    "compilerOptions": {
+        "lib": [
+            "dom", // Because we're writing code targeting the browser.
+            "deno.window"
+        ]
     }
 }

@@ -1,5 +1,3 @@
-/// <reference lib="dom" />
-
 /**
  * Code in this module is used by embedded files/directories. You should not
  * rely on it directly.
@@ -9,7 +7,6 @@
 
 import {decodeBase64} from "./deps/std/encoding/base64.ts";
 
-// Hmm. For some reason DecompressionStream is in scope, but not CompressionFormat?
 type CompressionFormat = ConstructorParameters<typeof DecompressionStream>[0]
 
 

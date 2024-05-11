@@ -365,6 +365,9 @@
       }
     }
   },
+  "redirects": {
+    "https://esm.sh/v114/@types/canvas-confetti@~1.6/index.d.ts": "https://esm.sh/v114/@types/canvas-confetti@1.6.4/index.d.ts"
+  },
   "remote": {
     "https://deno.land/std@0.107.0/_util/assert.ts": "2f868145a042a11d5ad0a3c748dcf580add8a0dbc0e876eaa0026303a5488f58",
     "https://deno.land/std@0.107.0/_util/os.ts": "dfb186cc4e968c770ab6cc3288bd65f4871be03b93beecae57d657232ecffcac",
@@ -623,6 +626,7 @@
     "https://deno.land/x/oak@v12.6.0/structured_clone.ts": "c3888b14d1eec558345bfbf13d0993d59bd45aaa8588444e35dd558c3a921cd8",
     "https://deno.land/x/oak@v12.6.0/testing.ts": "37d684d57bb8e5150fb5eb2677e66b04dcb422709cf2c5a74c1df94d52aa02e2",
     "https://deno.land/x/oak@v12.6.0/util.ts": "0a3fdffb114859c2de84e1783efa3a544af4d2af8c6f08e0d25655de9d3e69bb",
-    "https://deno.land/x/path_to_regexp@v6.2.1/index.ts": "894060567837bae8fc9c5cbd4d0a05e9024672083d5883b525c031eea940e556"
+    "https://deno.land/x/path_to_regexp@v6.2.1/index.ts": "894060567837bae8fc9c5cbd4d0a05e9024672083d5883b525c031eea940e556",
+    "https://esm.sh/canvas-confetti@1.6.0": "c959788db178dbfb1ba269142e4c59c1398186a2e07401da98e73d4661801b2e"
   }
 }

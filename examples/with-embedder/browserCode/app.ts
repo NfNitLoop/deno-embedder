@@ -1,5 +1,3 @@
-/// <reference lib="dom"/>
-
 // Can import both local and remote code. 
 // Remote code will be cached and bundled so that it can be served locally w/o
 // any network requests.
