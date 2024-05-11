@@ -141,6 +141,16 @@ export class Embeds<T extends Record<string, File>> {
     }
 
     /**
+    * Returns a list of embed file keys.
+    * 
+    * This method can be used to retrieve the keys of the embed files for 
+    * iteration or other purposes.
+    */
+    list(): Array<keyof T> {
+        return Object.keys(this.#embeds) as Array<keyof T>;
+    }
+
+    /**
      * Type-safe method to load a known embed file.
      * 
      * If you know you need a particular embed at compile time, using this method
