@@ -42,7 +42,7 @@ to perform the embedding.
 Example:
 
 ```ts
-import * as embedder from "https://deno.land/x/embedder/mod.ts"
+import * as embedder from "jsr:@nfnitloop/deno-embedder"
 
 const options = {
     importMeta: import.meta,

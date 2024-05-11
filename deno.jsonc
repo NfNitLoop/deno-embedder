@@ -1,12 +1,20 @@
 {
+    "name": "@nfnitloop/deno-embedder",
+    "version": "1.2.0",
+    "exports": {
+        ".": "./mod.ts",
+        "./plugins/plugins": "./plugins/plugins.ts",
+        "./plugins/esbuild": "./plugins/esbuild.ts",
+        "./helpers/oak": "./helpers/oak.ts",
+        "./examples/with-embedder": "./examples/with-embedder/server.ts"
+    },
     "tasks": {
         "test": "deno task check && deno test --doc -A && deno task example-test",
 
-        // Note: `deno check` without `--reload` can give wrong result. :( 
-        // See: https://github.com/denoland/deno/issues/18516
-        "check": "deno check --reload mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
+        "check": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts && deno task check-publish",
+        "check-publish": "deno publish --dry-run --allow-dirty",
 
-        "example-test": "cd examples/with-embedder && deno check --reload server.ts && deno test -A",
+        "example-test": "cd examples/with-embedder && deno check server.ts && deno test -A",
         "example-build": "cd examples/with-embedder && deno run -A embedder.ts build",
         "example-run": "cd examples/with-embedder && deno task dev"
 
@@ -20,11 +28,9 @@
         }
     },
     "test": {
-        "files": {
-            "exclude": [
-                // Has example code that references theoretical modules:
-                "README.md"
-            ]
-        }
+        "exclude": [
+            // Has example code that references theoretical modules:
+            "README.md"
+        ]
     }
 }

@@ -11,12 +11,12 @@
  * @module
  */
 
-import { debounce, deferred } from "https://deno.land/std@0.175.0/async/mod.ts";
-import * as path from "https://deno.land/std@0.175.0/path/mod.ts";
-import { exists } from "https://deno.land/std@0.175.0/fs/mod.ts";
-import * as b64 from "https://deno.land/std@0.175.0/encoding/base64.ts";
+import { debounce, deferred } from "./deps/std/async.ts";
+import * as path from "./deps/std/path.ts";
+import { exists } from "./deps/std/fs.ts";
+import { encodeBase64 } from "./deps/std/encoding/base64.ts"
 
-import { Command } from "https://deno.land/x/cliffy@v0.25.7/command/mod.ts";
+import { Command } from "./deps/cliffy/command.ts";
 
 
 import * as embed from "./embed.ts"
@@ -129,12 +129,12 @@ class EmbedWriter {
     }
 
     async writeFile({filePath, data}: {filePath: string, data: Uint8Array}): Promise<void> {
-        let compression = "gzip"
+        const compression = "gzip"
         let compressed = await compress(data, compression)
         let gain = data.length - compressed.length
         let shouldCompress = gain >= this.minCompressionGainBytes
 
-        let encoded = shouldCompress ? b64.encode(compressed) : b64.encode(data)
+        let encoded = shouldCompress ? encodeBase64(compressed) : encodeBase64(data)
         encoded = encoded.replaceAll(/.{120}/g, (it) => it + "\n")
     
         let outLines = [
@@ -207,7 +207,7 @@ class EmbedWriter {
     async #readEmbeds() {
 
         let toPosix = (p: string) => p
-        if (path.SEP === "\\") {
+        if (path.SEPARATOR === "\\") {
             toPosix = (p) => p.replaceAll("\\", "/")
         }
     
@@ -246,7 +246,7 @@ class EmbedWriter {
 
 }
 
-async function compress(data: Uint8Array, compression: string): Promise<Uint8Array> {
+async function compress(data: Uint8Array, compression: CompressionFormat): Promise<Uint8Array> {
     let input = new Blob([data])
     let cs = new CompressionStream(compression)
     let stream = input.stream().pipeThrough(cs)

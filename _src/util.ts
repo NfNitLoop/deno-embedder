@@ -3,7 +3,7 @@
  * @module
  */
 
-import * as path from "https://deno.land/std@0.175.0/path/mod.ts";
+import { join as pathJoin } from "../deps/std/path.ts";
 
 /** Read all files from a directory tree, recursively.  */
 export async function * recursiveReadDir(dir: string): AsyncGenerator<Deno.DirEntry> {
@@ -18,10 +18,10 @@ export async function * recursiveReadDir(dir: string): AsyncGenerator<Deno.DirEn
         }
         // entry.isDirectory
         let dirName = entry.name
-        for await (let child of recursiveReadDir(path.join(dir, dirName))) {
+        for await (let child of recursiveReadDir(pathJoin(dir, dirName))) {
             yield {
                 ...child,
-                name: path.join(dirName, child.name)
+                name: pathJoin(dirName, child.name)
             }
         }
     }

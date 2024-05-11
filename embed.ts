@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 /**
  * Code in this module is used by embedded files/directories. You should not
  * rely on it directly.
@@ -5,7 +7,11 @@
  * @module
  */
 
-import * as b64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
+import {decodeBase64} from "./deps/std/encoding/base64.ts";
+
+// Hmm. For some reason DecompressionStream is in scope, but not CompressionFormat?
+type CompressionFormat = ConstructorParameters<typeof DecompressionStream>[0]
+
 
 // This is a type, not a var. It's used in a JSDoc {@link} below.
 // deno-lint-ignore no-unused-vars
@@ -25,7 +31,7 @@ const decoder = new TextDecoder()
 export class File {
     readonly size: number
     #encodedBytes: string;
-    #compression: string|undefined;
+    #compression: CompressionFormat | undefined;
 
     constructor(meta: FileMeta) {
         this.size = meta.size
@@ -40,7 +46,7 @@ export class File {
             return this.#decodedBytes
         }
 
-        let bytes = b64.decode(this.#encodedBytes)
+        let bytes = decodeBase64(this.#encodedBytes)
         if (this.#compression) {
             bytes = await decompress(bytes, this.#compression)
         }
@@ -52,7 +58,7 @@ export class File {
     /**
      * Parse the bytes as utf-8 text.
      */
-    async text() {
+    async text(): Promise<string> {
         if (this.#cachedText === undefined) {
             this.#cachedText = decoder.decode(await this.bytes())
         }
@@ -79,7 +85,7 @@ interface FileMeta {
     // The base-64 encoded representation:
     encoded: string
 
-    compression?: string
+    compression?: CompressionFormat
 
     // TODO: sha256, modified time, etc.
 }
@@ -87,7 +93,7 @@ interface FileMeta {
 /** Shortcut for `new File(opts)` */
 export function F(opts: FileMeta) { return new File(opts) }
 
-async function decompress(data: Uint8Array, compression: string): Promise<Uint8Array> {
+async function decompress(data: Uint8Array, compression: CompressionFormat): Promise<Uint8Array> {
     let input = new Blob([data])
     let ds = new DecompressionStream(compression)
     let stream = input.stream().pipeThrough(ds)

@@ -1,6 +1,6 @@
 // NOTE: These are relative paths because the source code for deno-embedder
 // lives in the same repository as this example. You should import these from
-// https://deno.land/x/embedder@version/mod.ts, etc.  :) 
+// `jsr:@nfnitloop/deno-embedder@version`
 //
 import * as embedder from "../../mod.ts"
 import { ESBuild } from "../../plugins/esbuild.ts"

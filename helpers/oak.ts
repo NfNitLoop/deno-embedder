@@ -3,8 +3,8 @@
  * 
  * @module
  */
-import { lookup } from "https://deno.land/x/media_types@v2.10.2/mod.ts";
-import * as _oak from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import { lookup } from "../deps/std/media_types.ts";
+import * as _oak from "../deps/oak.ts";
 import type { File, Embeds } from "../embed.ts"
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.

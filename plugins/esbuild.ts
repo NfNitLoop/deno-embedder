@@ -9,7 +9,7 @@ import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
  * automatically.
  */
 export class ESBuild implements WholeDirPlugin {
-    readonly pluginType = "whole-dir"
+    readonly pluginType: "whole-dir" = "whole-dir"
 
     #entryPoints: string[]
     #platform: esbuild.Platform
