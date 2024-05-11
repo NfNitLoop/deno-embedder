@@ -1,9 +1,12 @@
+1.2.1
+=====
+
+Now supports embedding imports from JSR. 🎉
+
 1.2.0
 =====
 
 Publishing to JSR.
-
-TODO: Fix imports from JSR.
 
 1.0.0
 =====

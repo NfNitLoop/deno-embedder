@@ -4,11 +4,21 @@
 import sarcasm from "./sarcasm.ts"
 import { confetti } from "./deps.ts"
 
+import { 
+    CurrentArchitecture,
+    CurrentOS,
+    CurrentProduct,
+    CurrentRuntime,
+    CurrentVersion,
+  } from "jsr:@cross/runtime@1.0.0";
+
 
 
 export function run() {
     document.body.onclick = onClick
     onClick()
+
+    console.log({CurrentArchitecture, CurrentOS, CurrentProduct, CurrentRuntime, CurrentVersion})
 }
 
 function onClick() {

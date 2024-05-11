@@ -1,4 +1,6 @@
-import { Plugin as DenoCache, esbuild } from "./_esbuild_deno_cache.ts"
+import * as esbuild from "npm:esbuild@0.21.1"
+import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@^0.10.3";
+
 
 import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
 
@@ -28,7 +30,7 @@ export class ESBuild implements WholeDirPlugin {
 
         let plugins = []
         if (this.#bundleRemoteSources) {
-            plugins.push(new DenoCache())
+            plugins.push(...denoPlugins())
         }
 
         let options = {
