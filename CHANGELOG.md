@@ -1,3 +1,8 @@
+1.3.0
+=====
+
+Add the `plugins` option to the ESBuild plugin.
+
 1.2.1
 =====
 

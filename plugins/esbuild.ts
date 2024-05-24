@@ -17,20 +17,25 @@ export class ESBuild implements WholeDirPlugin {
     #platform: esbuild.Platform
     #format: esbuild.Format
     #bundleRemoteSources: boolean
+    #plugins: esbuild.Plugin[];
 
     constructor(args: Args) {
         this.#entryPoints = args.entryPoints
         this.#platform = args.platform ?? "browser"
         this.#format = args.format ?? "esm"  
         this.#bundleRemoteSources = args.bundleRemoteSources ?? true
+        this.#plugins = args.plugins ?? []
     }
 
     async convert(args: ConvertArgs): Promise<void> {
         let {destDir, sourceDir, emit} = args
 
-        let plugins = []
+        let plugins: esbuild.Plugin[] = []
+        plugins.push(...this.#plugins)
         if (this.#bundleRemoteSources) {
-            plugins.push(...denoPlugins())
+            plugins.push(...denoPlugins({
+                loader: "native" // use the Deno cache, don't download every time.
+            }))
         }
 
         let options = {
@@ -44,7 +49,7 @@ export class ESBuild implements WholeDirPlugin {
             splitting: true,
             platform: this.#platform,
             format: this.#format,
-            write: false,
+            write: false, // We'll further transform these in memory.
             outdir: destDir,
             plugins
         } as const
@@ -87,7 +92,18 @@ export interface Args {
      * into the local files so that no remote connections are necessary when
      * running the code.
      * 
+     * This internally enables <https://github.com/lucacasonato/esbuild_deno_loader>
+     * to do the caching/loading.
+     * 
+     * However, you may need to disable this to work around
+     * <https://github.com/NfNitLoop/deno-embedder/issues/10>.
+     * 
      * Default: true
      */
     bundleRemoteSources?: boolean
+
+    /**
+     * Additional plugins to modify sources before bundling.
+     */
+    plugins?: esbuild.Plugin[]
 }
