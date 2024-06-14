@@ -18,7 +18,10 @@ import type { Mapping } from "./mod.ts"
 // w/ other files we may place in this directory, which won't end with this.
 export const GENERATED_SUFFIX = "_.ts"
 
-export const importMeta = import.meta
+export const importMeta: ImportMeta = import.meta
+type ImportMeta = {
+    readonly url: string
+}
 
 const decoder = new TextDecoder()
 
@@ -88,7 +91,7 @@ interface FileMeta {
 }
 
 /** Shortcut for `new File(opts)` */
-export function F(opts: FileMeta) { return new File(opts) }
+export function F(opts: FileMeta): File { return new File(opts) }
 
 async function decompress(data: Uint8Array, compression: CompressionFormat): Promise<Uint8Array> {
     let input = new Blob([data])

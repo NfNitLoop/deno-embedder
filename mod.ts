@@ -22,6 +22,7 @@ import { Command } from "./deps/cliffy/command.ts";
 import * as embed from "./embed.ts"
 import type { FileEmitter, Plugin } from "./plugins/plugins.ts"
 import { recursiveReadDir } from "./_src/util.ts";
+import { toJsr } from "./_src/jsr_fix.ts";
 
 const VERSION = "1.0.0"
 const DIR_FILENAME = "dir.ts"
@@ -239,18 +240,26 @@ class EmbedWriter {
 
 
 function relativeEmbedImport(embedFilePath: string) {
-    const url = embed.importMeta.url
-    
-    // URLs are absolute, can be imported at the same path everywhere:
-    if (!url.startsWith("file:")) {
-        return url
+    const importUrl = embed.importMeta.url
+
+    if (importUrl.startsWith("file:")) {
+        // Use a relative file import. (Usually just for local testing/dev.)
+        // This is less fragile than a static import. (Allows relocating your project.)
+        let dest = new URL(path.toFileUrl(path.dirname(embedFilePath)))
+        let meta = new URL(importUrl)
+        return path.posix.relative(dest.pathname, meta.pathname)
     }
 
-    // Else, use a relative file import. (Usually just for local testing/dev.)
-    let dest = new URL(path.toFileUrl(path.dirname(embedFilePath)))
-    let meta = new URL(url)
-    return path.posix.relative(dest.pathname, meta.pathname)
+    const jsrImport = toJsr(importUrl)
+    if (jsrImport) {
+        return jsrImport
+    }
+
+    // Otherwise, HTTP(S) imports are the best we can do:
+    return importUrl   
 }
+
+
 
 type CompressionFormat = ConstructorParameters<typeof CompressionStream>[0]
 

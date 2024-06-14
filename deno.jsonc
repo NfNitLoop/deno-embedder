@@ -1,12 +1,15 @@
 {
     "name": "@nfnitloop/deno-embedder",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "exports": {
         ".": "./mod.ts",
         "./plugins/plugins": "./plugins/plugins.ts",
         "./plugins/esbuild": "./plugins/esbuild.ts",
         "./helpers/oak": "./helpers/oak.ts",
-        "./examples/with-embedder": "./examples/with-embedder/server.ts"
+        "./examples/with-embedder": "./examples/with-embedder/server.ts",
+
+        // Needs to be exposed so that embedded files can import w/ JSR syntax. You shouldn't use this directly.
+        "./embed.ts": "./embed.ts"
     },
     "tasks": {
         "test": "deno task check && deno test --doc -A && deno task example-test",
