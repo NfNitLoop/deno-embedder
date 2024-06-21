@@ -6,7 +6,7 @@
 import type * as oak from "../deps/oak.ts";
 export * as oak from "../deps/oak.ts";
 import { lookup } from "../deps/std/media_types.ts";
-import type { File, Embeds } from "../embed.ts"
+import type { Embeds } from "../embed.ts"
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.
  * 
@@ -20,7 +20,7 @@ import type { File, Embeds } from "../embed.ts"
  * 
  * Ex: `serveDir(router, "/static/", staticFiles)`
  */
-export function serveDir<T extends Record<string,File>>(router: oak.Router, urlPath: string, embeds: Embeds<T>) {
+export function serveDir(router: oak.Router, urlPath: string, embeds: Embeds): void {
     if (!urlPath.endsWith("/")) {
         throw new Error(`URL Path must end with "/":  ${urlPath}`)
     }
@@ -40,9 +40,9 @@ export function serveDir<T extends Record<string,File>>(router: oak.Router, urlP
  * 
  * Ex: `serveFile(ctx, staticFiles.dir, "foo/bar.txt")`
  */
-export async function serveFile<T extends Record<string,File>>(
+export async function serveFile(
     ctx: oak.Context,
-    embeds: Embeds<T>,
+    embeds: Embeds,
     filePath: string,
     next?: () => Promise<unknown>,
 ): Promise<unknown> {

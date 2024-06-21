@@ -177,10 +177,9 @@ class EmbedWriter {
         let body = [
             `export default E({`
         ]
-        files.forEach((file, index) => {
-            let importName = `f${index}`
-            imports.push(`import ${importName} from "./${file}${embed.GENERATED_SUFFIX}"`)
-            body.push(`  "${file}": ${importName},`)
+        files.forEach(file => {
+            const importPath = `./${file}${embed.GENERATED_SUFFIX}`
+            body.push(`  "${file}": () => import("${importPath}"),`)
         })
 
         body.push(`})`)

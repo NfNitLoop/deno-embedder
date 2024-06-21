@@ -111,21 +111,16 @@ async function decompress(data: Uint8Array, compression: CompressionFormat): Pro
     return new Uint8Array(buf)
 }
 
-/**
- * Makes a type-safe get() function for a dir.ts.
- * 
- * You'll be able to call get(fileName), and the file names will be type-checked
- * by TypeScript.
- */
-export function G<T extends Record<string, File>>(files: T): (filePath: keyof T) => Promise<File> {
-    // This may one day require async for dynamic imports, so we'll require it
-    // now:
-    // deno-lint-ignore require-await
-    let fn = async (filePath: keyof T) => {
-        return files[filePath]
-    }
-    return fn
+/** A module that exports a File object. Each embedded file is this. */
+type FileModule = {
+    default: File
 }
+
+/** A function that we can call to import a file module. */
+type FileModuleImporter = () => Promise<FileModule>
+
+/** We expect the embed file to pass this into Embeds. */
+type EmbedsDef<K extends string> = Record<K, FileModuleImporter>
 
 /**
  * Allows accessing all files embedded by a {@link Mapping}.
@@ -133,10 +128,10 @@ export function G<T extends Record<string, File>>(files: T): (filePath: keyof T)
  * Each `dir.ts` in your Mapping `destDir` exposes an instance
  * of this class as its default export.
  */
-export class Embeds<T extends Record<string, File>> {
-    #embeds: T
+export class Embeds<K extends string = string> {
+    #embeds: EmbedsDef<K>
 
-    constructor(embeds: T) {
+    constructor(embeds: EmbedsDef<K>) {
         this.#embeds = embeds
     }
 
@@ -146,8 +141,8 @@ export class Embeds<T extends Record<string, File>> {
     * This method can be used to retrieve the keys of the embed files for 
     * iteration or other purposes.
     */
-    list(): Array<keyof T> {
-        return Object.keys(this.#embeds) as Array<keyof T>;
+    list(): Array<K> {
+        return Object.keys(this.#embeds) as Array<K>;
     }
 
     /**
@@ -157,10 +152,10 @@ export class Embeds<T extends Record<string, File>> {
      * lets TypeScript check that you have specified a correct (existing) file
      * path.
      */
-    // May eventually require async, so using async now:
-    // deno-lint-ignore require-await
-    async load(filePath: keyof T): Promise<File> {
-        return this.#embeds[filePath]
+    async load(filePath: K): Promise<File> {
+        const importer = this.#embeds[filePath]
+        const module = await importer()
+        return module.default
     }
 
     /**
@@ -169,14 +164,16 @@ export class Embeds<T extends Record<string, File>> {
      * If you're loading user-specified file paths, use this method. It will
      * return `null` if no such file exists.
      */
-    // May eventually require async, so using async now:
-    // deno-lint-ignore require-await
     async get(filePath: string): Promise<File|null> {
-        return this.#embeds[filePath] ?? null
+        const importer = this.#embeds[filePath as K]
+        if (!importer) { return null }
+
+        const module = await importer()
+        return module.default
     }
 }
 
 /** Shortcut for `new Embeds(embeds)` */
-export function E<T extends Record<string, File>>(embeds: T): Embeds<T> {
+export function E<K extends string>(embeds: EmbedsDef<K>): Embeds<K> {
     return new Embeds(embeds)
 }

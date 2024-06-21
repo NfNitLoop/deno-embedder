@@ -11,10 +11,23 @@
         // Needs to be exposed so that embedded files can import w/ JSR syntax. You shouldn't use this directly.
         "./embed.ts": "./embed.ts"
     },
+    "publish": {
+        "include": [
+            "mod.ts",
+            "embed.ts",
+
+            // TODO: Move stuff into a src/ dir now that we have JSR exports. (<3)
+            "_src/**/*.ts",
+            "deps/**/*.ts",
+            "plugins/**/*.ts",
+            "helpers/**/*.ts",
+            "examples/with-embedder/**/*.ts",
+        ]
+    },
     "tasks": {
         "test": "deno task check && deno test --doc -A && deno task example-test",
 
-        "check": " deno task check-main && deno task check-without-embedder && deno task check-with-embedder && deno task check-publish",
+        "check": " deno task check-main && deno task check-without-embedder && deno task example-build && deno task check-with-embedder && deno task check-publish",
         "check-main": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
         "check-publish": "deno publish --dry-run --allow-dirty",
         "check-without-embedder": "cd examples/without-embedder; deno task check",
