@@ -1,0 +1,5 @@
+# Don't commit binary builds:
+/example_*
+
+# DO commit the sources:
+!/example_*.ts
