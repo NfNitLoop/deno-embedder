@@ -74,6 +74,3 @@ export function serveDir(app: Hono, path: ServeDirPath, embeds: Embeds) {
 }
 
 type ServeDirPath = `/${string}/*` | "/*"
-
-
-// TODO: export hono from JSR package.

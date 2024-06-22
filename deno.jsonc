@@ -6,7 +6,10 @@
         "./plugins/plugins": "./plugins/plugins.ts",
         "./plugins/esbuild": "./plugins/esbuild.ts",
         "./helpers/oak": "./helpers/oak.ts",
+        "./helpers/hono": "./helpers/hono.ts",
         "./examples/with-embedder": "./examples/with-embedder/server.ts",
+        "./examples/oak": "./examples/with-embedder/server.ts",
+        "./examples/hono": "./examples/hono/server.ts",
 
         // Needs to be exposed so that embedded files can import w/ JSR syntax. You shouldn't use this directly.
         "./embed.ts": "./embed.ts"
@@ -22,6 +25,7 @@
             "plugins/**/*.ts",
             "helpers/**/*.ts",
             "examples/with-embedder/**/*.ts",
+            "examples/hono/**/*.ts"
         ]
     },
     "tasks": {
