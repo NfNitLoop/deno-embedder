@@ -1,3 +1,14 @@
+1.4.0
+=====
+
+Released: Jun 21, 2024
+
+* Improved: Embedded files are now loaded lazily, when first used, instead of at startup.  
+  See: <https://github.com/NfNitLoop/deno-embedder/issues/6>
+* New: Hono middlerware!  
+  See: <https://github.com/NfNitLoop/deno-embedder/issues/12>
+* Dev: Add lint checks to `deno task test`.
+
 1.3.0
 =====
 

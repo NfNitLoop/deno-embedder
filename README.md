@@ -16,10 +16,12 @@ Main Features
  * "Dev mode" for quick development
  * Automatic (gzip) compression for file types that benefit from it.
  * Plugins for modifying files before embedding them, if needed.
- * Utility for easily [serving files] from [Oak].
+ * Utilities for easily serving embedded files from [Oak] or [Hono]. See:
+   * [helpers/oak](https://jsr.io/@nfnitloop/deno-embedder/doc/helpers/oak/~)
+   * [helpers/hono](https://jsr.io/@nfnitloop/deno-embedder/doc/helpers/hono/~)
 
-[serving files]: https://deno.land/x/embedder@v0.9.1/helpers/oak.ts
 [Oak]: https://github.com/oakserver/oak#readme
+[Hono]: https://hono.dev
 
 Quick Start
 -----------
