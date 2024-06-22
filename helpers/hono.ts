@@ -17,11 +17,12 @@ import type { Embeds } from "../embed.ts";
 /**
  * A version of Hono's [serveStatic] which serves embedded files.
  * 
- * Note: You likely want to specify `rewriteRequestPath` if your full URL path
+ * Note: You likely want to specify [rewriteRequestPath] if your full URL path
  * doesn't match the relative path within the directory of embedded files.
- * The [`serveDir`] function provides a simpler interface.
+ * The {@link serveDir} function provides a simpler interface.
  * 
  * [serveStatic]: https://hono.dev/docs/getting-started/deno#serve-static-files
+ * [rewriteRequestPath]: https://hono.dev/docs/getting-started/deno#rewriterequestpath
  */
 export function serveStatic<E extends Env = Env>(
     options: Omit<ServeStaticOptions<E>, "root"> & { root: Embeds }
