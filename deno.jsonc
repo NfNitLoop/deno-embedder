@@ -25,17 +25,26 @@
         ]
     },
     "tasks": {
-        "test": "deno task check && deno test --doc -A && deno task example-test",
+        "test": "deno task check && deno test --doc -A && deno task examples:test",
 
-        "check": " deno task check-main && deno task check-without-embedder && deno task example-build && deno task check-with-embedder && deno task check-publish",
-        "check-main": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
-        "check-publish": "deno publish --dry-run --allow-dirty",
-        "check-without-embedder": "cd examples/without-embedder; deno task check",
-        "check-with-embedder": "cd examples/with-embedder; deno task check",
+        "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
+        "check:main": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
+        "check:publish": "deno publish --dry-run --allow-dirty",
+        "check:without-embedder": "cd examples/without-embedder; deno task check",
 
-        "example-test": "cd examples/with-embedder && deno check server.ts && deno test -A",
-        "example-build": "cd examples/with-embedder && deno run -A embedder.ts build",
-        "example-run": "cd examples/with-embedder && deno task dev"
+        "examples:check": "deno task oak:check && deno task hono:check",
+        "examples:build": "deno task oak:build && deno task hono:build",
+        "examples:test": "deno task oak:test && deno task hono:test",
+
+        "oak:check": "cd examples/with-embedder; deno task check",
+        "oak:test": "cd examples/with-embedder && deno test -A",
+        "oak:build": "cd examples/with-embedder && deno task build-embeds",
+        "oak:start": "cd examples/with-embedder && deno task start",
+
+        "hono:check": "cd examples/hono; deno task check",
+        "hono:test": "cd examples/hono && deno test -A",
+        "hono:build": "cd examples/hono && deno task build-embeds",
+        "hono:start": "cd examples/hono && deno task start",
 
     },
     "lint": {

@@ -22,12 +22,9 @@ import type { File, Embeds } from "../embed.ts";
  * 
  * [serveStatic]: https://hono.dev/docs/getting-started/deno#serve-static-files
  */
-export const serveStatic = <
-  T extends Record<string, File>,
-  E extends Env = Env
->(
-  options: Omit<ServeStaticOptions<E>, "root"> & { root: Embeds<T> }
-): MiddlewareHandler => {
+export function serveStatic<E extends Env = Env>(
+  options: Omit<ServeStaticOptions<E>, "root"> & { root: Embeds }
+): MiddlewareHandler {
   const { root, ...rest } = options;
   return function serveStatic(c, next) {
     const getContent = async (path: string) => {
@@ -50,4 +47,3 @@ export const serveStatic = <
 
 // TODO: serveDir().
 // TODO: export hono from JSR package.
-// TODO: include hono in `deno task test`.
