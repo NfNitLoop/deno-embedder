@@ -25,7 +25,8 @@
         ]
     },
     "tasks": {
-        "test": "deno task check && deno test --doc -A && deno task examples:test",
+        // Run the full test suite:
+        "test": "deno task check && deno test --doc -A && deno task examples:test && deno task lints",
 
         "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
         "check:main": "deno check mod.ts embed.ts helpers/oak.ts helpers/hono.ts plugins/esbuild.ts",
@@ -46,6 +47,7 @@
         "hono:build": "cd examples/hono && deno task build-embeds",
         "hono:start": "cd examples/hono && deno task start",
 
+        "lints": "deno lint"
     },
     "lint": {
         "rules": {

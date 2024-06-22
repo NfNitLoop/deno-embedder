@@ -460,16 +460,17 @@ async function devMode(opts: DevOptions) {
         await c.convert()
     }
 
-    console.log("Starting server:")
-    let proc = Deno.run({
-        cmd: ["deno", "task", taskName],
-    });
-
+    console.log("Starting server:");
     (async () => {
-        let status = await proc.status()
-        console.log(`task "${taskName}" exited with status: ${status.code}`)
+        const cmd = new Deno.Command("deno", {
+            args: ["task", taskName],
+            stdout: "inherit",
+        })
+        const output = await cmd.output()
+        const { code: statusCode} = output
+        console.log(`task "${taskName}" exited with status: ${statusCode}`)
         // TODO: Clean way to shut down converters?
-        Deno.exit(status.code)
+        Deno.exit(statusCode)
     })()
 
     for (let c of converters) {

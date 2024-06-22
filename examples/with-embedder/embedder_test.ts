@@ -4,6 +4,6 @@
 import * as e from "./embedder.ts"
 
 
-Deno.test(async function testBuildCmd(t) {
+Deno.test(async function testBuildCmd() {
     await e.embedder.main({options: e.options, args: ["build"]})
 })
