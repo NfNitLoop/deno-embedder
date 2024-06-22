@@ -47,6 +47,7 @@
       "jsr:@std/path@0.225.0": "jsr:@std/path@0.225.0",
       "jsr:@std/path@^0.225.0": "jsr:@std/path@0.225.1",
       "jsr:@std/text@0.221": "jsr:@std/text@0.221.0",
+      "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:esbuild@0.21.1": "npm:esbuild@0.21.1",
       "npm:path-to-regexp@6.2.1": "npm:path-to-regexp@6.2.1"
     },
@@ -338,6 +339,10 @@
       },
       "@esbuild/win32-x64@0.21.1": {
         "integrity": "sha512-W9NttRZQR5ehAiqHGDnvfDaGmQOm6Fi4vSlce8mjM75x//XKuVAByohlEX6N17yZnVXxQFuh4fDRunP8ca6bfA==",
+        "dependencies": {}
+      },
+      "@types/node@18.16.19": {
+        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
         "dependencies": {}
       },
       "esbuild@0.21.1": {
