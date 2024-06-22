@@ -20,7 +20,7 @@ import type { Embeds } from "../embed.ts"
  * 
  * Ex: `serveDir(router, "/static/", staticFiles)`
  */
-export function serveDir(router: oak.Router, urlPath: string, embeds: Embeds): void {
+export function serveDir(router: oak.Router, urlPath: ServerDirPath, embeds: Embeds): void {
     if (!urlPath.endsWith("/")) {
         throw new Error(`URL Path must end with "/":  ${urlPath}`)
     }
@@ -34,6 +34,9 @@ export function serveDir(router: oak.Router, urlPath: string, embeds: Embeds): v
         await serveFile(ctx, embeds, filePath, next)
     })
 }
+
+/** Must start & end with slashes. */
+type ServerDirPath = "/" | `/${string}/`
 
 /**
  * Serve a single file from a directory, with the correct mime type.

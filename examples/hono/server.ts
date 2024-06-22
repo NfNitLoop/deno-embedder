@@ -1,5 +1,5 @@
 import { Hono } from "../../deps/hono.ts";
-import { serveStatic } from "../../helpers/hono.ts";
+import { serveDir, serveStatic } from "../../helpers/hono.ts";
 import staticFiles from "./embed/static/dir.ts";
 import bundledJs from "./embed/code/dir.ts";
 
@@ -9,6 +9,7 @@ app.get("/", (c) => {
   return c.redirect("/static/index.html");
 });
 
+// You can use serveStatic() to expose your embedded files:
 app.use(
   "/static/*",
   serveStatic({
@@ -19,13 +20,8 @@ app.use(
   })
 );
 
-app.use(
-  "/code/*",
-  serveStatic({
-    root: bundledJs,
-    rewriteRequestPath: (path) => path.replace(/^\/code\//, "/"),
-  })
-);
+// ... or a simpler serveDir()
+serveDir(app, "/code/*", bundledJs)
 
 app.get("/text", async (c) => {
   // Accessing files this way gets type-checked: (typo-checked?)

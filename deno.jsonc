@@ -28,7 +28,7 @@
         "test": "deno task check && deno test --doc -A && deno task examples:test",
 
         "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
-        "check:main": "deno check mod.ts embed.ts helpers/oak.ts plugins/esbuild.ts",
+        "check:main": "deno check mod.ts embed.ts helpers/oak.ts helpers/hono.ts plugins/esbuild.ts",
         "check:publish": "deno publish --dry-run --allow-dirty",
         "check:without-embedder": "cd examples/without-embedder; deno task check",
 
@@ -58,7 +58,9 @@
     "test": {
         "exclude": [
             // Has example code that references theoretical modules:
-            "README.md"
+            "README.md",
+            // Pseudocode doc block example:
+            "helpers/hono.ts"
         ]
     }
 }
