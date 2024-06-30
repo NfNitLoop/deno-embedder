@@ -4,6 +4,7 @@ import embeds from "./embedded/dir.ts"
 async function main() {
     await showFile("foo bar.ts")
     await showFile("foobar_.d.ts_.ts")
+    await showFile("foo bar/baz etc.md")
 }
 
 type FileName = Parameters<(typeof embeds)["load"]>[0]

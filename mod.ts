@@ -172,15 +172,16 @@ class EmbedWriter {
         }
         const relative = toPosix(path.relative(this.destDir, absPath))
 
-        let {base: fileName, dir} = path.parse(absPath)
-        fileName = fileName.replaceAll(/[ ]+/g, "_") // Spaces aren't allowed on JSR.
-        fileName = fileName.replaceAll(".d.ts", ".d_ts") // .d.ts *anywhere* in the file name invokes special typescript behavior.
-        // Prefix everything with _ so it sorts together nicely:
-        fileName = `_${fileName}.ts`
+        // Spaces aren't allowed on JSR:
+        let normalized = relative.replaceAll(/[ ]+/g, "_")
+        // .d.ts *anywhere* in the file name invokes special typescript behavior:
+        normalized = normalized.replaceAll(".d.ts", ".d_ts")
+        const {base, dir} = path.parse(normalized)
+        // Prefix generated files with _ so they sorts together nicely. (makes dir.ts easy to see.)
+        normalized = path.posix.join(dir, `_${base}.ts`)
 
-        const onDisk = path.join(dir, fileName)
-        const importPath = "./" + path.relative(this.destDir, onDisk)
-
+        const onDisk = path.join(this.destDir, normalized)
+        const importPath = "./" + normalized
 
         const paths: FilePaths = {
             original: filePath,
