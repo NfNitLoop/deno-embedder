@@ -32,7 +32,8 @@ export interface ConvertArgs {
     /**
      * Callback to emit a single file.
      * 
-     * The Plugin must call this for each file it wishes to emit.
+     * The Plugin's must call this for each file it generates.
+     * 
      * It should await the Promise that is returned.
      */
     emit: FileEmitter
@@ -42,11 +43,9 @@ export type FileEmitter = (args: FileEmitterArgs) => Promise<void>
 
 export interface FileEmitterArgs {
     /**
-     * The name of the file to emit.
+     * The relative path name of the file to embed.
      * 
-     * If this is a relative path, it will be resolved inside of `destDir`.
-     * 
-     * You may not attempt to emit a file outside of `destDir`.
+     * Example: `foo.txt` or `foo/bar.png`
      */
     file: string,
 

@@ -86,11 +86,11 @@ class StaticConverter implements Converter {
         await this.#embedWriter.writeDir()
     }
 
-    async #convertFile(name: string) {
-        let filePath = path.join(this.#sourceDir, name)
+    async #convertFile(relPath: string) {
+        let fullPath = path.join(this.#sourceDir, relPath)
         await this.#embedWriter.writeFile({
-            filePath: name, 
-            data: await Deno.readFile(filePath)
+            filePath: relPath, 
+            data: await Deno.readFile(fullPath)
         })
     }
 
@@ -138,10 +138,7 @@ class EmbedWriter {
         let encoded = shouldCompress ? encodeBase64(compressed) : encodeBase64(data)
         encoded = encoded.replaceAll(/.{120}/g, (it) => it + "\n")
 
-        const outPath = path.resolve(this.destDir, filePath + embed.GENERATED_SUFFIX)
-        if (!parentChild(this.destDir, outPath)) {
-            throw new Error(`${outPath} must be within ${this.destDir}`)
-        }
+        const {onDisk: outPath} = this.#addFile(filePath)
     
         let outLines = [
             `import {F} from "${relativeEmbedImport(outPath)}"`,
@@ -162,12 +159,61 @@ class EmbedWriter {
     }
 
     /**
+     * Add a file to our internal list of files in this dir.
+     * 
+     * Returns an object w/ normalized/non-normalized paths.
+     * 
+     */
+    #addFile(filePath: string): FilePaths {
+        const absPath = path.resolve(this.destDir, filePath)
+        if (!parentChild(this.destDir, absPath)) {
+            // Don't allow Plugin authors to emit to, say, ../someOtherFile.ts:
+            throw new Error(`${absPath} must be within ${this.destDir}`)
+        }
+        const relative = toPosix(path.relative(this.destDir, absPath))
+
+        let {base: fileName, dir} = path.parse(absPath)
+        fileName = fileName.replaceAll(/[ ]+/g, "_") // Spaces aren't allowed on JSR.
+        fileName = fileName.replaceAll(".d.ts", ".d_ts") // .d.ts *anywhere* in the file name invokes special typescript behavior.
+        // Prefix everything with _ so it sorts together nicely:
+        fileName = `_${fileName}.ts`
+
+        const onDisk = path.join(dir, fileName)
+        const importPath = "./" + path.relative(this.destDir, onDisk)
+
+
+        const paths: FilePaths = {
+            original: filePath,
+            relative,
+            import: importPath,
+            onDisk,
+        }
+
+        const existing = this.#files.get(paths.onDisk)
+        if (existing) {
+            const msg = [
+                `Two files normalize to the same on-disk location: "${paths.onDisk}":`,
+                `1) "${existing.original}"`,
+                `2) "${paths.original}"`,
+            ].join("\n")
+            throw new Error(msg)
+        }
+        this.#files.set(paths.onDisk, paths)
+
+        return paths
+    }
+
+    /** Files we've written, keyed by .onDisk */
+    #files = new Map<string, FilePaths>()
+
+    /**
      * write the dir.ts file that lets us find all files.
      * 
      * You should call this after you've written all your files.
      */
     async writeDir(): Promise<void> {
-        let files = await this.#readEmbeds()
+        // Files, sorted by the relative path, for output stability:
+        let files = [...this.#files.values()].sort(byKey(it => it.relative))
 
         const outPath = path.join(this.destDir, DIR_FILENAME)
 
@@ -178,8 +224,7 @@ class EmbedWriter {
             `export default E({`
         ]
         files.forEach(file => {
-            const importPath = `./${file}${embed.GENERATED_SUFFIX}`
-            body.push(`  "${file}": () => import("${importPath}"),`)
+            body.push(`  "${file.relative}": () => import("${file.import}"),`)
         })
 
         body.push(`})`)
@@ -193,49 +238,72 @@ class EmbedWriter {
         await Deno.writeTextFile(outPath, dirData)
     }
 
-
-
-    async #readEmbeds() {
-
-        let toPosix = (p: string) => p
-        if (path.SEPARATOR === "\\") {
-            toPosix = (p) => p.replaceAll("\\", "/")
-        }
-    
-        let paths: string[] = []
-        for await (let entry of recursiveReadDir(this.destDir)) {
-            let filePath = entry.name
-            if (!filePath.endsWith(embed.GENERATED_SUFFIX)) { 
-                continue
-
-            }
-            filePath = filePath.slice(0, -embed.GENERATED_SUFFIX.length)
-            paths.push(toPosix(filePath))
-        }
-
-        paths.sort()
-        return paths
-    }
-
     /**
      * Delete all generated files. Run before a regenerate to start fresh.
      */
     async clean() {
-        if (!await exists(this.destDir)) {
+        if (!await exists(this.destDir) || await isEmptyDir(this.destDir)) {
             // No dir to clean up. Probably because this is our first run:
             return
         }
 
-        for await (let entry of recursiveReadDir(this.destDir)) {
-            let fullPath = path.join(this.destDir, entry.name)
-            let fileName = path.basename(entry.name)
-            if (fileName.endsWith(embed.GENERATED_SUFFIX) || fileName === DIR_FILENAME) {
-                await Deno.remove(fullPath)
-            }
+        if (!await exists(path.join(this.destDir, DIR_FILENAME))) {
+            throw new Error(`${this.destDir} lacks a ${DIR_FILENAME}, so may not be a generated directory. Refusing to clean it up.`)
         }
+
+        await Deno.remove(this.destDir, {recursive: true})
     }
 
 }
+
+async function isEmptyDir(path: string) {
+    for await (const _entry of Deno.readDir(path)) {
+        return false
+    }
+    return true
+}
+
+/** Used with Array.sort to sort elements by some key. */ 
+function byKey<T, K extends number|string>(keyFn: KeyFn<T,K>): CmpFn<T> {
+    return function cmpFn(aT, aB) {
+        const a = keyFn(aT)
+        const b = keyFn(aB)
+        if (a < b) { return -1 }
+        if (a > b) { return 1 }
+        return 0
+    }
+}
+
+type KeyFn<T,K> = (t: T) => K
+type CmpFn<T> = (a: T, b: T) => number
+
+type FilePaths = {
+
+    /** The import path given to us by the {@link Plugin}. */
+    // Just used for error messages, to show the invalid input(s).
+    original: string
+
+    /** Relative file path within dest dir, in POSIX file path format (using /, not \).
+     * 
+     * ex: `foo/bar.png`
+     */
+    relative: string
+
+
+    /** The full path to the generated file on disk. */
+    onDisk: string
+
+    /** The relative import for the embedded file. ex: "./foo/_bar.png.ts" */
+    import: string
+}
+
+const toPosix = (() => {
+    let toPosix = (p: string) => p
+    if (path.SEPARATOR === "\\") {
+        toPosix = (p) => p.replaceAll("\\", "/")
+    }
+    return toPosix
+})()
 
 
 function relativeEmbedImport(embedFilePath: string) {
@@ -243,7 +311,7 @@ function relativeEmbedImport(embedFilePath: string) {
 
     if (importUrl.startsWith("file:")) {
         // Use a relative file import. (Usually just for local testing/dev.)
-        // This is less fragile than a static import. (Allows relocating your project.)
+        // This is less fragile than a static import. (Allows relocating this git directory.)
         let dest = new URL(path.toFileUrl(path.dirname(embedFilePath)))
         let meta = new URL(importUrl)
         return path.posix.relative(dest.pathname, meta.pathname)

@@ -14,10 +14,6 @@ type CompressionFormat = ConstructorParameters<typeof DecompressionStream>[0]
 // deno-lint-ignore no-unused-vars
 import type { Mapping } from "./mod.ts"
 
-// All generated files will end in this, to make sure they can't conflict
-// w/ other files we may place in this directory, which won't end with this.
-export const GENERATED_SUFFIX = "_.ts"
-
 export const importMeta: ImportMeta = import.meta
 type ImportMeta = {
     readonly url: string

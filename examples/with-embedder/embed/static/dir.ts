@@ -1,6 +1,6 @@
 import {E} from "../../../../embed.ts"
 
 export default E({
-  "Smiley.svg": () => import("./Smiley.svg_.ts"),
-  "index.html": () => import("./index.html_.ts"),
+  "Smiley.svg": () => import("./_Smiley.svg.ts"),
+  "index.html": () => import("./_index.html.ts"),
 })

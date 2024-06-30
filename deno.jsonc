@@ -59,7 +59,11 @@
                 // See: https://github.com/denoland/deno_lint/issues/1125
                 "prefer-const",
             ]
-        }
+        },
+        "exclude": [
+            "tests/jsr_paths/typescript_error",
+            "tests/jsr_paths/spaces_error",
+        ]
     },
     "test": {
         "exclude": [
