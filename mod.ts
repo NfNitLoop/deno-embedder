@@ -77,9 +77,13 @@ class StaticConverter implements Converter {
     }
 
     async convert(): Promise<void> {
+        // TODO: Could we do this atomically, in a tempdir, then move it into place?
+        // Or would that mess up `deno run --watch`?
+
+        await this.#embedWriter.clean()
         await this.#mkdirs()
     
-        for await (let entry of recursiveReadDir(this.#sourceDir)) {
+        for await (const entry of recursiveReadDir(this.#sourceDir)) {
             await this.#convertFile(entry.name)
         }
 
@@ -243,6 +247,8 @@ class EmbedWriter {
      * Delete all generated files. Run before a regenerate to start fresh.
      */
     async clean() {
+        this.#files.clear()
+
         if (!await exists(this.destDir) || await isEmptyDir(this.destDir)) {
             // No dir to clean up. Probably because this is our first run:
             return
