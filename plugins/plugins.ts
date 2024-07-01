@@ -1,4 +1,19 @@
-// TODO: Is the doc lint going to warn me about the lack of module docs here?
+/**
+ * Interfaces for writing plugins for deno-embedder.
+ *
+ * Plugins can be passed to {@link embedder.main} via a {@link embedder.Mapping}
+ * to alter files before they're embedded.
+ *
+ * The {@link ESBuild} plugin is an example.
+ *
+ * @module
+ */
+
+// deno-lint-ignore no-unused-vars -- used in JSDoc @link.
+import type { ESBuild } from "./esbuild.ts"
+// deno-lint-ignore no-unused-vars -- used in JSDoc @link.
+import type * as embedder from "../mod.ts"
+
 
 /**
  * Tyeps of plugins supported by deno-embedder.

@@ -1,14 +1,25 @@
+/**
+ * {@link ESBuild} implements a {@link Plugin} which bundles and transpiles
+ * TypeScript for use in the browser.
+ * 
+ * @module
+ */
+
 import * as esbuild from "npm:esbuild@0.21.1"
 import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@^0.10.3";
 
 
-import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
+// deno-lint-ignore no-unused-vars -- Plugin is used in a @link.
+import type { ConvertArgs, WholeDirPlugin, Plugin } from "./plugins.ts"
 
 /**
  * Runs ESBuild on files before embedding them with ts-embed.
  * 
  * This lets you write TypeScript/TSX which gets bundled and embedded
  * automatically.
+ * 
+ * See <https://github.com/NfNitLoop/deno-embedder/blob/main/examples/with-embedder/embedder.ts>
+ * for example use.
  */
 export class ESBuild implements WholeDirPlugin {
 
