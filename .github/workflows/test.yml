@@ -1,5 +1,4 @@
-name: Publish
-
+name: Tests
 on:
   workflow_dispatch: {}
   pull_request: {}

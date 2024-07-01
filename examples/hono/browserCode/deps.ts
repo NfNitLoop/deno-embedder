@@ -1,4 +1,4 @@
-import confetti from "https://esm.sh/canvas-confetti@1.6.0"
+import confetti from "npm:canvas-confetti@1.9.3"
 export { confetti }
 
 // Warning! There's currently a bug/missing feature in esbuild that makes 
