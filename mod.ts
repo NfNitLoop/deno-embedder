@@ -2,8 +2,9 @@
  * Deno Embedder
  * =============
  * 
- * deno-embedder is a dev tool for embedding binary files into a Deno
- * application as typescript code. 
+ * Deno Embedder lets you embed binary files (.png, .txt, etc.)
+ * into your deno project without requiring that users grant it
+ * `--allow-read` or `--allow-net` permissions.
  * 
  * For getting started documentation and examples, see:
  * <https://github.com/NfNitLoop/deno-embedder#readme>

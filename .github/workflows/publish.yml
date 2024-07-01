@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # The OIDC ID token is used for authentication with JSR.    
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: Call test here?
+
+      # - run: npx jsr publish
+      - run: deno publish
