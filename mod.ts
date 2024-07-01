@@ -242,6 +242,12 @@ class EmbedWriter {
 
         // TODO: Is this atomic? If not, make one.
         await Deno.writeTextFile(outPath, dirData)
+
+        // Also mark these files as generated for git/github:
+        await Deno.writeTextFile(
+            path.join(this.destDir, ".gitattributes"),
+            `* linguist-generated=true`
+        )
     }
 
     /**
