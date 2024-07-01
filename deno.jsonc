@@ -1,6 +1,6 @@
 {
     "name": "@nfnitloop/deno-embedder",
-    "version": "1.4.7",
+    "version": "1.4.8",
     "exports": {
         ".": "./src/mod.ts",
         "./plugins/plugins": "./src/plugins/plugins.ts",
