@@ -1,4 +1,4 @@
-import {E} from "../../../../../embed.ts"
+import {E} from "../../../../../src/embed.ts"
 
 export default E({
   "foo bar.ts": () => import("./_foo_bar.ts.ts"),

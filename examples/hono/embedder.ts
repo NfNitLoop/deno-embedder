@@ -2,8 +2,8 @@
 // lives in the same repository as this example. You should import these from
 // `jsr:@nfnitloop/deno-embedder@version`
 //
-import * as embedder from "../../mod.ts"
-import { ESBuild } from "../../plugins/esbuild.ts"
+import * as embedder from "../../src/mod.ts"
+import { ESBuild } from "../../src/plugins/esbuild.ts"
 
 
 export const options = {

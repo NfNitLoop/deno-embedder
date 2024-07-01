@@ -1,4 +1,4 @@
-import {F} from "../../../../embed.ts"
+import {F} from "../../../../src/embed.ts"
 export default F({
  size: 1120,
  compression: "gzip",

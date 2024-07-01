@@ -2,11 +2,11 @@
     "name": "@nfnitloop/deno-embedder",
     "version": "1.4.7",
     "exports": {
-        ".": "./mod.ts",
-        "./plugins/plugins": "./plugins/plugins.ts",
-        "./plugins/esbuild": "./plugins/esbuild.ts",
-        "./helpers/oak": "./helpers/oak.ts",
-        "./helpers/hono": "./helpers/hono.ts",
+        ".": "./src/mod.ts",
+        "./plugins/plugins": "./src/plugins/plugins.ts",
+        "./plugins/esbuild": "./src/plugins/esbuild.ts",
+        "./helpers/oak": "./src/helpers/oak.ts",
+        "./helpers/hono": "./src/helpers/hono.ts",
 
         // Allows easily running the example server:
         "./examples/with-embedder": "./examples/with-embedder/server.ts",
@@ -18,20 +18,12 @@
         "./examples/hono": "./examples/hono/server.ts",
 
         // Needs to be exposed so that embedded files can import w/ JSR syntax. You shouldn't use this directly.
-        "./embed.ts": "./embed.ts"
+        "./embed.ts": "./src/embed.ts"
     },
     "publish": {
         "include": [
             "README.md",
-
-            "mod.ts",
-            "embed.ts",
-
-            // TODO: Move stuff into a src/ dir now that we have JSR exports. (<3)
-            "_src/**/*.ts",
-            "deps/**/*.ts",
-            "plugins/**/*.ts",
-            "helpers/**/*.ts",
+            "src/**/*.ts",
             "examples/with-embedder/**/*.ts",
             "examples/hono/**/*.ts"
         ]
@@ -41,7 +33,7 @@
         "test": "deno task check && deno test --doc -A && deno task examples:test && deno task lints",
 
         "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
-        "check:main": "deno check mod.ts embed.ts helpers/oak.ts helpers/hono.ts plugins/esbuild.ts",
+        "check:main": "deno check src/mod.ts src/embed.ts src/helpers/oak.ts src/helpers/hono.ts src/plugins/esbuild.ts",
         "check:publish": "deno publish --dry-run --allow-dirty",
         "check:without-embedder": "cd examples/without-embedder; deno task check",
 
@@ -79,7 +71,7 @@
             // Has example code that references theoretical modules:
             "README.md",
             // Pseudocode doc block example:
-            "helpers/hono.ts"
+            "src/helpers/hono.ts"
         ]
     }
 }

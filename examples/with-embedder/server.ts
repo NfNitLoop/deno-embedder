@@ -1,4 +1,4 @@
-import { serveDir, oak } from "../../helpers/oak.ts"
+import { serveDir, oak } from "../../src/helpers/oak.ts"
 import staticFiles from "./embed/static/dir.ts"
 import bundledJs from "./embed/code/dir.ts"
 import sarcasm from "./browserCode/sarcasm.ts";

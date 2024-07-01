@@ -3,7 +3,7 @@
  * @module
  */
 
-import { join as pathJoin } from "../deps/std/path.ts";
+import { join as pathJoin } from "./deps/std/path.ts";
 
 /** Read all files from a directory tree, recursively.  */
 export async function * recursiveReadDir(dir: string): AsyncGenerator<Deno.DirEntry> {

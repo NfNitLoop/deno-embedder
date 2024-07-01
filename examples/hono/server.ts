@@ -1,5 +1,5 @@
-import { Hono } from "../../deps/hono.ts";
-import { serveDir, serveStatic } from "../../helpers/hono.ts";
+import { Hono } from "../../src/deps/hono.ts";
+import { serveDir, serveStatic } from "../../src/helpers/hono.ts";
 import staticFiles from "./embed/static/dir.ts";
 import bundledJs from "./embed/code/dir.ts";
 

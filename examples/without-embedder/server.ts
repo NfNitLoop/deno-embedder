@@ -1,4 +1,4 @@
-import { Application } from "../../deps/oak.ts";
+import { Application } from "../../src/deps/oak.ts";
 
 const app = new Application();
 

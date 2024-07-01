@@ -1,4 +1,4 @@
-import {E} from "../../../../embed.ts"
+import {E} from "../../../../src/embed.ts"
 
 export default E({
   "Smiley.svg": () => import("./_Smiley.svg.ts"),

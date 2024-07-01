@@ -1,4 +1,4 @@
-import * as embedder from "../../../mod.ts"
+import * as embedder from "../../../src/mod.ts"
 
 export const options = {
     importMeta: import.meta,

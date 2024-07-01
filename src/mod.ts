@@ -22,8 +22,8 @@ import { Command } from "./deps/cliffy/command.ts";
 
 import * as embed from "./embed.ts"
 import type { FileEmitter, Plugin } from "./plugins/plugins.ts"
-import { recursiveReadDir } from "./_src/util.ts";
-import { toJsr } from "./_src/jsr_fix.ts";
+import { recursiveReadDir } from "./util.ts";
+import { toJsr } from "./jsr_fix.ts";
 
 const VERSION = "1.0.0"
 const DIR_FILENAME = "dir.ts"
