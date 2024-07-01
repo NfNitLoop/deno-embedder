@@ -7,15 +7,17 @@
 
 import {decodeBase64} from "./deps/std/encoding/base64.ts";
 
-type CompressionFormat = ConstructorParameters<typeof DecompressionStream>[0]
 
 
 // This is a type, not a var. It's used in a JSDoc {@link} below.
 // deno-lint-ignore no-unused-vars
 import type { Mapping } from "./mod.ts"
 
+/** Used internally so that deno-embedder can generate embed files that properly import this module. */
 export const importMeta: ImportMeta = import.meta
-type ImportMeta = {
+
+/** Import information we expose via {@link importMeta} */
+export type ImportMeta = {
     readonly url: string
 }
 
@@ -25,29 +27,35 @@ const decoder = new TextDecoder()
  * Represents the contents of a file that's been embedded into TypeScript.
  */
 export class File {
+    /** Size of the embedded file in bytes (uncomrpessed/unencoded) */
     readonly size: number
-    #encodedBytes: string;
-    #compression: CompressionFormat | undefined;
 
+    /** May be compressed */
+    #contents: {bytes: Uint8Array, compression: CompressionFormat | undefined }
+
+
+    /** Called (indirectly) by each embedded file. */
     constructor(meta: FileMeta) {
         this.size = meta.size
-        // Only decode bytes as necessary to save memory/time at startup:
-        this.#encodedBytes = meta.encoded
-        this.#compression = meta.compression
+        // We now use dynamic imports, so we're specifically importing this file due to a request.
+        // Eagerly decode base64 into bytes so we can GC the inefficient encoding.
+        this.#contents = {
+            bytes: decodeBase64(meta.encoded),
+            compression: meta.compression
+        }
     }
 
-    #decodedBytes: Uint8Array | undefined = undefined
+    /** Returns the raw bytes of the embedded file. */
     async bytes(): Promise<Uint8Array> {
-        if (this.#decodedBytes !== undefined) {
-            return this.#decodedBytes
+        let {bytes, compression} = this.#contents
+
+        // Decompress on first use:
+        if (compression) {
+            bytes = await decompress(bytes, compression)
+            compression = undefined
+            this.#contents = { bytes, compression}
         }
 
-        let bytes = decodeBase64(this.#encodedBytes)
-        if (this.#compression) {
-            bytes = await decompress(bytes, this.#compression)
-        }
-        this.#decodedBytes = bytes
-        this.#encodedBytes = "" // maybe release garbage.
         return bytes
     }
 
@@ -73,18 +81,30 @@ type EmbedImports = Readonly<Record<string, File>>
 
 
 /**
- * The data we expect to find inside embedded *_.ts files.
+ * The data we expect to find generated embedded files.
  */
-interface FileMeta {
+export interface FileMeta {
+    /** Size of the embedded file (uncomrpessed/unencoded) */
     size: number
 
-    // The base-64 encoded representation:
+    /** 
+     * The base-64 encoded representation of the file.
+     * 
+     * Note: One benefit of passing this to a TypeScript function/object is that
+     * we can immediately decode it, and save on 33% of the base64 encoding cost
+     * in memory. (after GC)
+     */
     encoded: string
 
+    /** If specified, how the bytes of this file are compressed. */
     compression?: CompressionFormat
 
     // TODO: sha256, modified time, etc.
 }
+
+/** Valid compression formats for embedded files. */
+export type CompressionFormat = ConstructorParameters<typeof DecompressionStream>[0]
+
 
 /** Shortcut for `new File(opts)` */
 export function F(opts: FileMeta): File { return new File(opts) }
@@ -107,16 +127,16 @@ async function decompress(data: Uint8Array, compression: CompressionFormat): Pro
     return new Uint8Array(buf)
 }
 
-/** A module that exports a File object. Each embedded file is this. */
-type FileModule = {
+/** Each embedded file is of this shape. It has a default export that gives us a File object. */
+export type FileModule = {
     default: File
 }
 
 /** A function that we can call to import a file module. */
-type FileModuleImporter = () => Promise<FileModule>
+export type FileModuleImporter = () => Promise<FileModule>
 
 /** We expect the embed file to pass this into Embeds. */
-type EmbedsDef<K extends string> = Record<K, FileModuleImporter>
+export type EmbedsDef<K extends string> = Record<K, FileModuleImporter>
 
 /**
  * Allows accessing all files embedded by a {@link Mapping}.
@@ -127,6 +147,9 @@ type EmbedsDef<K extends string> = Record<K, FileModuleImporter>
 export class Embeds<K extends string = string> {
     #embeds: EmbedsDef<K>
 
+    /**
+     * Called (indirectly) by a `dir.ts` file to register its contents.
+     */
     constructor(embeds: EmbedsDef<K>) {
         this.#embeds = embeds
     }
@@ -169,7 +192,10 @@ export class Embeds<K extends string = string> {
     }
 }
 
-/** Shortcut for `new Embeds(embeds)` */
+/** 
+ * Called by a `dir.ts` file to register its contents.
+ * 
+ * Shortcut for the constructor for {@link Embeds} */
 export function E<K extends string>(embeds: EmbedsDef<K>): Embeds<K> {
     return new Embeds(embeds)
 }

@@ -3,17 +3,20 @@
  * 
  * @module
  */
-import type * as oak from "../deps/oak.ts";
-export * as oak from "../deps/oak.ts";
+import * as oak from "../deps/oak.ts"
+import type { Context as OakContext, Router as OakRouter } from "../deps/oak.ts"
 import { lookup } from "../deps/std/media_types.ts";
 import type { Embeds } from "../embed.ts"
+
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.
  * 
  * If you prefer another version, you may use an import map to rewrite the
  * version used here. (But beware that if Oak changes interfaces, things may break!)
  */
-
+export { oak }
+// `deno doc --lint` isn't happy with the above, so we also have to export top-level types. Boo.
+export type { OakRouter, OakContext }
 
 /**
  * Add an entry to `router` to serve static files.
@@ -35,8 +38,12 @@ export function serveDir(router: oak.Router, urlPath: ServerDirPath, embeds: Emb
     })
 }
 
-/** Must start & end with slashes. */
-type ServerDirPath = "/" | `/${string}/`
+/**
+ * The URL Path you want to serve this directory as.
+ * 
+ * Must start & end with slashes. ex: `/foo/`
+ */
+export type ServerDirPath = "/" | `/${string}/`
 
 /**
  * Serve a single file from a directory, with the correct mime type.

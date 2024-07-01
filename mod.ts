@@ -451,7 +451,7 @@ function converterFor(baseDir: string, opts: Mapping) {
  * 
  * For example, you can create an `embedder.ts` like:
  * ```ts
- * import * as embed from "./mod.ts" // NOTE: You'll use the full URL here. :)
+ * import * as embed from "./mod.ts" // NOTE: You'll use the full import path here. :)
  * 
  * let options: embed.DevOptions = {
  *     importMeta: import.meta,
@@ -500,13 +500,19 @@ export async function main({options, args}: MainArgs) {
     await mainCommand.parse(args ?? Deno.args)
 }
 
+/** Arguments to {@link main} */
 export interface MainArgs {
-    options: DevOptions,
+
+    /** See: {@link Options} */
+    options: Options,
 
     /**
      * Arguments to pass to the invocation of main(). 
      * 
-     * If unspecified, defaults to `Deno.args
+     * If unspecified, defaults to `Deno.args`.
+     * 
+     * You generally want to leave this unspecified, so that you can use your embedder.ts script with subcommands. 
+     * See the example in {@link main}
      */
     args?: string[]
 }
@@ -517,7 +523,7 @@ export interface MainArgs {
  * 
  * This is expected to be the main way you generate embedded files.
  */
-async function devMode(opts: DevOptions) {
+async function devMode(opts: Options) {
     let baseDir = dirFrom(opts.importMeta)
     let taskName = opts.mainTask ?? "start"
 
@@ -550,7 +556,7 @@ async function devMode(opts: DevOptions) {
 /**
  * Just do one round of creating embed files.
  */
-async function buildOnce(opts: DevOptions) {
+async function buildOnce(opts: Options) {
     let baseDir = dirFrom(opts.importMeta)
     let converters = opts.mappings.map( it => converterFor(baseDir, it))
 
@@ -616,8 +622,8 @@ interface QuietEvent {
 }
 
 
-
-export interface DevOptions {
+/** Options passed to {@link main} via {@link MainArgs} */
+export interface Options {
     /**
      * The name of the (usually: web server) task to run in dev mode.
      * 
@@ -643,6 +649,13 @@ export interface DevOptions {
      */
     mappings: Mapping[]
 }
+
+/**
+ * Backward-compatble type alias for {@link Options}.
+ * 
+ * @deprecated use {@link Options} instead.
+ */
+export type DevOptions = Options;
 
 function dirFrom(meta: ImportMeta) {
     let url = new URL(meta.url)

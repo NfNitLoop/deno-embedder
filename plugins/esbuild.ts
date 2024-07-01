@@ -11,6 +11,8 @@ import type { ConvertArgs, WholeDirPlugin } from "./plugins.ts"
  * automatically.
  */
 export class ESBuild implements WholeDirPlugin {
+
+    /** Implements {@link WholeDirPlugin.pluginType} */
     readonly pluginType: "whole-dir" = "whole-dir"
 
     #entryPoints: string[]
@@ -19,6 +21,7 @@ export class ESBuild implements WholeDirPlugin {
     #bundleRemoteSources: boolean
     #plugins: esbuild.Plugin[];
 
+    /** Constructor. */
     constructor(args: Args) {
         this.#entryPoints = args.entryPoints
         this.#platform = args.platform ?? "browser"
@@ -27,6 +30,7 @@ export class ESBuild implements WholeDirPlugin {
         this.#plugins = args.plugins ?? []
     }
 
+    /** Implements {@link WholeDirPlugin.convert} */
     async convert(args: ConvertArgs): Promise<void> {
         let {destDir, sourceDir, emit} = args
 
@@ -72,6 +76,7 @@ export class ESBuild implements WholeDirPlugin {
 
 }
 
+/** Constructor args for {@link ESBuild} */
 export interface Args {
     /**
      * The javascript file(s) that get loaded by your web application.
@@ -81,10 +86,10 @@ export interface Args {
     // it would make most code unable to be tree-shaken.
     entryPoints: string[]
 
-    // Default: "browser"
+    /** Default: "browser" */
     platform?: esbuild.Platform
 
-    // Default: "esm"
+    /** Default: "esm" */
     format?: esbuild.Format
 
     /**

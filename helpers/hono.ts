@@ -74,4 +74,11 @@ export function serveDir(app: Hono, path: ServeDirPath, embeds: Embeds) {
     }))
 }
 
-type ServeDirPath = `/${string}/*` | "/*"
+export type { Hono, ServeStaticOptions, MiddlewareHandler, Env}
+
+/**
+ * The URL Path you want to serve this directory as.
+ * 
+ * Must be in the pattern `/foo/*`
+ */
+export type ServeDirPath = `/${string}/*` | "/*"

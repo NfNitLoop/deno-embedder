@@ -5,6 +5,7 @@
       "jsr:@cliffy/command@1.0.0-rc.4": "jsr:@cliffy/command@1.0.0-rc.4",
       "jsr:@cliffy/flags@1.0.0-rc.4": "jsr:@cliffy/flags@1.0.0-rc.4",
       "jsr:@cliffy/table@1.0.0-rc.4": "jsr:@cliffy/table@1.0.0-rc.4",
+      "jsr:@david/dax": "jsr:@david/dax@0.41.0",
       "jsr:@david/dax@0.41": "jsr:@david/dax@0.41.0",
       "jsr:@david/which@^0.4.1": "jsr:@david/which@0.4.1",
       "jsr:@hono/hono@^4.0.0": "jsr:@hono/hono@4.4.7",
@@ -43,6 +44,7 @@
       "jsr:@std/io@0.223": "jsr:@std/io@0.223.0",
       "jsr:@std/io@^0.221.0": "jsr:@std/io@0.221.0",
       "jsr:@std/json@^0.213.1": "jsr:@std/json@0.213.1",
+      "jsr:@std/jsonc": "jsr:@std/jsonc@0.213.1",
       "jsr:@std/jsonc@0.213": "jsr:@std/jsonc@0.213.1",
       "jsr:@std/media-types@0.222": "jsr:@std/media-types@0.222.1",
       "jsr:@std/media-types@0.223": "jsr:@std/media-types@0.223.0",
@@ -57,7 +59,8 @@
       "jsr:@std/streams@0.221.0": "jsr:@std/streams@0.221.0",
       "jsr:@std/text@0.221": "jsr:@std/text@0.221.0",
       "npm:esbuild@0.21.1": "npm:esbuild@0.21.1",
-      "npm:path-to-regexp@6.2.1": "npm:path-to-regexp@6.2.1"
+      "npm:path-to-regexp@6.2.1": "npm:path-to-regexp@6.2.1",
+      "npm:zod": "npm:zod@3.23.8"
     },
     "jsr": {
       "@cliffy/command@1.0.0-rc.4": {
@@ -416,6 +419,10 @@
       },
       "path-to-regexp@6.2.1": {
         "integrity": "sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==",
+        "dependencies": {}
+      },
+      "zod@3.23.8": {
+        "integrity": "sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==",
         "dependencies": {}
       }
     }

@@ -7,7 +7,13 @@
         "./plugins/esbuild": "./plugins/esbuild.ts",
         "./helpers/oak": "./helpers/oak.ts",
         "./helpers/hono": "./helpers/hono.ts",
+
+        // Allows easily running the example server:
         "./examples/with-embedder": "./examples/with-embedder/server.ts",
+        // Allows code examples which can be checked at build time, & run independently:
+        // !! Currently complains about complex export types. Fix with a wrapper w/ explicit types.
+        // TODO: "./examples/with-embedder/staticDir": "./examples/with-embedder/embed/static/dir.ts",
+
         "./examples/oak": "./examples/with-embedder/server.ts",
         "./examples/hono": "./examples/hono/server.ts",
 
@@ -53,7 +59,8 @@
         "hono:build": "cd examples/hono && deno task build-embeds",
         "hono:start": "cd examples/hono && deno task start",
 
-        "lints": "deno lint"
+        "lints": "deno lint && deno task lints:docs",
+        "lints:docs": "./tools/doc-lints.ts"
     },
     "lint": {
         "rules": {
