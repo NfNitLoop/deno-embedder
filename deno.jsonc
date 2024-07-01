@@ -33,7 +33,7 @@
         "test": "deno task check && deno test --doc -A && deno task examples:test && deno task lints",
 
         "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
-        "check:main": "deno check src/mod.ts src/embed.ts src/helpers/oak.ts src/helpers/hono.ts src/plugins/esbuild.ts",
+        "check:main": "./tools/with-exports.ts deno check",
         "check:publish": "deno publish --dry-run --allow-dirty",
         "check:without-embedder": "cd examples/without-embedder; deno task check",
 
@@ -52,7 +52,7 @@
         "hono:start": "cd examples/hono && deno task start",
 
         "lints": "deno lint && deno task lints:docs",
-        "lints:docs": "./tools/doc-lints.ts"
+        "lints:docs": "./tools/with-exports.ts deno doc --lint"
     },
     "lint": {
         "rules": {
