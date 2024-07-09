@@ -70,15 +70,22 @@ const $ = dax.build$({
 async function expectWorks(fileName: string) {
     await $`deno compile ${fileName}`
 
-    const binName = fileName.substring(0, fileName.length - 3)
-    const text = await $`${"./" + binName}`.text()
+    const text = await $`${binPath(fileName)}`.text()
     assertEquals(text, `Hello, world!`)
 }
 
 async function expectBroken(fileName: string) {
     await $`deno compile ${fileName}`
 
-    const binName = fileName.substring(0, fileName.length - 3)
-    const text = await $`${"./" + binName}`.noThrow().captureCombined().text()
+    const text = await $`${binPath(fileName)}`.noThrow().captureCombined().text()
     assert(text.includes("Module not found"))
+}
+
+function binPath(tsFile: string): string {
+    let baseName = tsFile.substring(0, tsFile.length - 3) // strip ".ts"
+    if (Deno.build.os == "windows") {
+        baseName += ".exe"
+    }
+
+    return `./${baseName}`
 }
