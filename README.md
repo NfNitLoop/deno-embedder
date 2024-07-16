@@ -29,7 +29,7 @@ Quick Start
 If you just want to see an example project to follow, take a look at
 [examples/with-embedder](./examples/with-embedder/).
 
-API Docs can be found at: <https://deno.land/x/embedder/mod.ts>
+API Docs can be found at: <https://jsr.io/@nfnitloop/deno-embedder/doc>
 
 
 Use
