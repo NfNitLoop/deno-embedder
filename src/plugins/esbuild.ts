@@ -82,7 +82,7 @@ export class ESBuild implements WholeDirPlugin {
 
         // esbuild seems to start a long-running process.  If you don't stop
         // it, Deno waits around forever for it to finish, instead of exiting.
-        esbuild.stop()
+        await esbuild.stop()
     }
 
 }
