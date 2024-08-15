@@ -47,8 +47,8 @@ export interface Mapping {
     plugin?: Plugin
 }
 
-// Can convert from one directory to another.
-interface Converter {
+/** Can convert from one directory to another. */
+type Converter = {
     /** Do one convert */
     convert(): Promise<void>
 

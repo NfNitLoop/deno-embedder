@@ -42,7 +42,7 @@
         "examples:test": "deno task oak:test && deno task hono:test",
 
         "oak:check": "cd examples/with-embedder; deno task check",
-        "oak:test": "cd examples/with-embedder && deno test -A",
+        "oak:test": "cd examples/with-embedder && deno test -A --trace-leaks",
         "oak:build": "cd examples/with-embedder && deno task build-embeds",
         "oak:start": "cd examples/with-embedder && deno task start",
 
