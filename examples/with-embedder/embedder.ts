@@ -5,6 +5,10 @@
 import * as embedder from "../../src/mod.ts"
 import { ESBuild } from "../../src/plugins/esbuild.ts"
 
+// Example:
+// import * as embedder from "jsr:@nfnitloop/deno-embedder@1.4.9"
+// import { ESBuild } from "jsr:@nfnitloop/deno-embedder@1.4.9/plugins/esbuild/"
+
 
 export const options = {
     importMeta: import.meta,
