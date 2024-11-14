@@ -1,3 +1,8 @@
+1.5.0
+=====
+
+Upgrade the ESBuild plugin to use jsr:@luca/esbuild-deno-loader@^0.11.0. (auto-detects import maps.)
+
 1.4.0
 =====
 
