@@ -50,7 +50,7 @@ export function serveStatic<E extends Env = Env>(
 /**
  * A simpler form of {@link serveStatic}.
  * 
- * ```ts
+ * ```ts, ignore
  * import myFiles from "./embeds/myFiles/dir.ts"
  * 
  * const app = new Hono()

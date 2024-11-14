@@ -474,7 +474,7 @@ function converterFor(baseDir: string, opts: Mapping) {
  *     }]
  * }
  * 
- * await embed.main({options})
+ * await embed.main({options, args: ["build"]})
  * ```
  * 
  * Then you can use it from your deno tasks to do a one-off build or run in

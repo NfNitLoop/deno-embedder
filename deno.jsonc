@@ -30,10 +30,10 @@
     },
     "tasks": {
         // Run the full test suite:
-        "test": "deno task check && deno test --doc -A && deno task examples:test && deno task lints",
+        "test": "deno task check && deno task examples:test && deno task lints",
 
         "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
-        "check:main": "./tools/with-exports.ts deno check",
+        "check:main": "./tools/with-exports.ts deno check --doc",
         "check:publish": "deno publish --dry-run --allow-dirty",
         "check:without-embedder": "cd examples/without-embedder; deno task check",
 
