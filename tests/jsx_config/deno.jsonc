@@ -1,0 +1,11 @@
+/// Example of specifying JSX build configuration that gets picked up by deno-embedder.
+
+{
+    "imports": {
+        "preact": "npm:preact@^10.24.3"
+    },
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact"
+    }
+}

@@ -1,7 +1,15 @@
+1.6.0
+=====
+Released: Nov. 20, 2024
+
+* ESBuild Plugin:
+  * Auto-detect some TypeScript compilerOptions from a project's deno.json[c] file.  
+    So far, this is just `jsx` and `jsxImportSource`. Please open an issue if you'd like more.
+
 1.5.0
 =====
 
-Upgrade the ESBuild plugin to use jsr:@luca/esbuild-deno-loader@^0.11.0. (auto-detects import maps.)
+ * Upgrade the ESBuild plugin to use jsr:@luca/esbuild-deno-loader@^0.11.0. (auto-detects import maps.)
 
 1.4.0
 =====

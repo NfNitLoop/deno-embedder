@@ -30,7 +30,10 @@
     },
     "tasks": {
         // Run the full test suite:
-        "test": "deno task check && deno task examples:test && deno task lints",
+        "test": "deno task check && deno task examples:test && deno task test:jsx && deno task lints",
+
+        // Since this directory has its own deno.jsonc, we need to test it explicitly:
+        "test:jsx": "cd tests/jsx_config && deno test -A",
 
         "check": "deno task check:main && deno task check:without-embedder && deno task examples:build && deno task examples:check && deno task check:publish",
         "check:main": "./tools/with-exports.ts deno check --doc",

@@ -10,18 +10,26 @@ Main Features
 -------------
 
  * Files are embedded within plain TypeScript (`.ts`) files.
-   * No need for `--allow-net` or `--allow-read` permissions to load them!
-   * You can `deno compile` the resulting app (or users can `deno install` it) 
-     and all your static file dependencies will be present.
+ * No need for `--allow-net` or `--allow-read` permissions to load them!
+ * Works with:
+    * `deno run`
+    * `deno compile`
+    * `deno install`
+    * `deno check`
+    * etc.?
  * "Dev mode" for quick development
  * Automatic (gzip) compression for file types that benefit from it.
- * Plugins for modifying files before embedding them, if needed.
+ * Designed to work with Deno's [SADI] (Statically-analyzable dynamic imports)
+   * Embedded files are automatically marked as part of your scripts' dependency graph.
+   * But, data files are only loaded into memory at runtime when requested.
  * Utilities for easily serving embedded files from [Oak] or [Hono]. See:
    * [helpers/oak](https://jsr.io/@nfnitloop/deno-embedder/doc/helpers/oak/~)
    * [helpers/hono](https://jsr.io/@nfnitloop/deno-embedder/doc/helpers/hono/~)
+ * Plugins for modifying files before embedding them, if needed. (See the ESBuild Plugin, below.)
 
 [Oak]: https://github.com/oakserver/oak#readme
 [Hono]: https://hono.dev
+[SADI]: https://deno.com/deploy/changelog#statically-analyzable-dynamic-imports
 
 Quick Start
 -----------

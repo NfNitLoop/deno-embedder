@@ -463,7 +463,7 @@ function converterFor(baseDir: string, opts: Mapping) {
  * Supports "dev" and "build" subcommands.
  * 
  * For example, you can create an `embedder.ts` like:
- * ```ts
+ * ```ts, ignore
  * import * as embed from "./mod.ts" // NOTE: You'll use the full import path here. :)
  * 
  * let options: embed.DevOptions = {

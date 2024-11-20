@@ -7,6 +7,10 @@
 
 import * as esbuild from "npm:esbuild@0.22.0"
 import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@^0.11.0";
+import * as path from "jsr:@std/path@1.0.8"
+import { exists as fileExists } from "jsr:@std/fs@1"
+import * as jsonc from "jsr:@std/jsonc@1.0.1";
+import {z} from "npm:zod@3.23.4"
 
 
 // deno-lint-ignore no-unused-vars -- Plugin is used in a @link.
@@ -66,7 +70,8 @@ export class ESBuild implements WholeDirPlugin {
             format: this.#format,
             write: false, // We'll further transform these in memory.
             outdir: destDir,
-            plugins
+            plugins,
+            ...(await detectDenoOptions(sourceDir))
         } as const
 
         // TODO: This requires holding all build results in memory.
@@ -104,14 +109,14 @@ export interface Args {
     format?: esbuild.Format
 
     /**
-     * If your sources contain imports to remote URLs, this will bundle them
+     * If your sources contain imports of remote code (ex: jsr:*, npm:*), this will bundle them
      * into the local files so that no remote connections are necessary when
      * running the code.
      * 
      * This internally enables <https://github.com/lucacasonato/esbuild_deno_loader>
      * to do the caching/loading.
      * 
-     * However, you may need to disable this to work around
+     * However, if you're embedding static files you may need to disable this to work around
      * <https://github.com/NfNitLoop/deno-embedder/issues/10>.
      * 
      * Default: true
@@ -123,3 +128,74 @@ export interface Args {
      */
     plugins?: esbuild.Plugin[]
 }
+
+/** ESBuild options detected from deno config files. */
+// Note: limited this type because expanding a larger type with ... breaks type inference at use site. 
+type DetectedOptions = Pick<esbuild.BuildOptions, "jsx" | "jsxImportSource">
+
+async function detectDenoOptions(sourceDir: string): Promise<DetectedOptions> {
+    const denoFile = await findDenoFile(sourceDir)
+    if (!denoFile) {
+        return {}
+    }
+
+    return await parseDenoOptions(denoFile)
+}
+
+async function parseDenoOptions(denoFile: string): Promise<DetectedOptions> {
+    const text = await Deno.readTextFile(denoFile)
+    const json = jsonc.parse(text)
+    const opts = DenoOptions.parse(json).compilerOptions
+
+    let jsx: DetectedOptions["jsx"] = undefined
+    if (opts?.jsx) {
+        // See: https://docs.deno.com/runtime/reference/jsx/
+        // And: https://esbuild.github.io/api/#jsx
+        const mapToEsbuild = {
+            "react": undefined,
+            "react-jsx": "automatic",
+        } as const
+
+        if (opts.jsx == "precompile") {
+            throw new Error(`In ${denoFile}, jsx option "precompile" is unsupported for embedding.`)
+        }
+        jsx = mapToEsbuild[opts.jsx]
+    }
+    
+    return  {
+        jsx,
+        jsxImportSource: opts?.jsxImportSource
+    }
+}
+
+const DenoOptions = z.object({
+    compilerOptions: z.object({
+        jsx: z.enum([
+            "react",
+            "react-jsx",
+            "precompile",
+        ]).optional(),
+        jsxImportSource: z.string().optional(),
+    }).optional()
+})
+
+async function findDenoFile(sourceDir: string): Promise<string|null> {
+    let cwd = sourceDir;
+    const files = ["deno.jsonc", "deno.json"]
+    while (true) {
+        for (const file of files) {
+            const filePath = path.join(cwd, file)
+            if (await fileExists(filePath)) {
+                return filePath
+            }
+        }
+
+        // `cd ..`
+        const parent = path.dirname(cwd)
+        if (parent == cwd) {
+            return null // we reached the root
+        }
+        cwd = parent
+    }
+}
+
