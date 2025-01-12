@@ -1,0 +1,8 @@
+# Lock file to show that the process is still running.
+/lock
+
+# Created by testing.
+/static/example.ts
+
+# generated files:
+/src/embedded/

@@ -1,0 +1,6 @@
+{
+    "tasks": {
+        "dev": "./embedder.ts dev",
+        "start": "./main.ts"
+    }
+}

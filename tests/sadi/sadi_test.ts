@@ -1,6 +1,8 @@
 /**
  * Testing Deno's Statically-Analyzable Dynamic Imports
  * 
+ * See: https://docs.deno.com/deploy/api/dynamic-import/
+ * 
  * We need to know exactly which syntaxes are statically analyzable.
  * The more analysis Deno does for us, the less verbose we can make the
  * resulting code.

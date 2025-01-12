@@ -67,6 +67,8 @@
         "exclude": [
             "tests/jsr_paths/typescript_error",
             "tests/jsr_paths/spaces_error",
+            // `deno lint` seems to think this is a .d.ts file.
+            "tests/jsr_paths/sample/static/foobar_.d.ts_.ts"
         ]
     },
     "test": {
