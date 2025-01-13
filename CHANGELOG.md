@@ -1,3 +1,12 @@
+1.6.1
+=====
+Released: Jan 12, 2025
+
+* ESBuild Plugin:
+  * When dev mode fails, stop the inner (usually: server) process.  
+    See: <https://github.com/NfNitLoop/deno-embedder/issues/17>
+
+
 1.6.0
 =====
 Released: Nov. 20, 2024
