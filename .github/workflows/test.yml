@@ -14,4 +14,4 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno task test
+      - run: DENO_JOBS=1 deno task test

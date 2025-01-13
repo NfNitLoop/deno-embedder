@@ -407,7 +407,11 @@ class PluginConverter implements Converter {
             // updates in the future. For now, it's just re-do everything:            
             if (event.kind == "quiet") {
                 console.log("Changes detected, regenerating...")
-                await this.convert()
+                try {
+                    await this.convert()
+                } catch (e) {
+                    throw new Error("Error running plugin conversion", {cause: e})
+                }
             }
         }
     }
@@ -487,10 +491,11 @@ export async function main({options, args}: MainArgs) {
             default: options.mainTask ?? "start"
         })
         .action(async (cliOptions) => {
-            await devMode({
+            const code = await devMode({
                 ...options,
                 ...{mainTask: cliOptions.task}
             })
+            Deno.exit(code)
         })
 
     const buildCommand = new Command()
@@ -536,7 +541,7 @@ export interface MainArgs {
  * 
  * This is expected to be the main way you generate embedded files.
  */
-async function devMode(opts: Options) {
+async function devMode(opts: Options): Promise<number> {
     let baseDir = dirFrom(opts.importMeta)
     let taskName = opts.mainTask ?? "start"
 
@@ -549,21 +554,33 @@ async function devMode(opts: Options) {
     }
 
     console.log("Starting server:");
-    (async () => {
-        const cmd = new Deno.Command("deno", {
-            args: ["task", taskName],
-            stdout: "inherit",
-        })
-        const output = await cmd.output()
-        const { code: statusCode} = output
-        console.log(`task "${taskName}" exited with status: ${statusCode}`)
-        // TODO: Clean way to shut down converters?
-        Deno.exit(statusCode)
-    })()
 
-    for (let c of converters) {
-        c.watch()
+    const cmd = new Deno.Command("deno", {
+        args: ["task", taskName],
+    })
+    await using proc = cmd.spawn()
+    const mainTaskFinished = async () => {
+        const status = await proc.status
+        const msg = `task "${taskName}" exited with status: ${status.code}`
+        if (status.code == 0) {
+            console.log(msg)
+            return
+        }
+        throw new Error(msg)
     }
+
+    let promises = [mainTaskFinished(), ...converters.map(c => c.watch())]
+
+    // If this resolves, there was either an error in one of the converters, or the main server task finished.
+    let code = 0
+    try {
+        await Promise.race(promises)
+    } catch (e) {
+        console.log(e)
+        code = 1
+    }
+    console.log("Exiting dev mode.")
+    return code
 }
 
 /**

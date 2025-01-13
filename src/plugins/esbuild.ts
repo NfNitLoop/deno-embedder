@@ -74,20 +74,25 @@ export class ESBuild implements WholeDirPlugin {
             ...(await detectDenoOptions(sourceDir))
         } as const
 
-        // TODO: This requires holding all build results in memory.
-        // Maybe build to tempdir instead?
-        let build = await esbuild.build(options)
+        try {
 
-        for (let outFile of build.outputFiles) {
-            await emit({
-                file: outFile.path,
-                contents: outFile.contents,
-            })
+            // TODO: This requires holding all build results in memory.
+            // Maybe build to tempdir instead?
+            let build = await esbuild.build(options)
+            
+            for (let outFile of build.outputFiles) {
+                await emit({
+                    file: outFile.path,
+                    contents: outFile.contents,
+                })
+            }
+
+        } finally {
+            // esbuild seems to start a long-running process.  If you don't stop
+            // it, Deno waits around forever for it to finish, instead of exiting.
+            await esbuild.stop()
+            // TODO: This doesn't work well if we have multiple instances of the ESBuild plugin running! Gah!
         }
-
-        // esbuild seems to start a long-running process.  If you don't stop
-        // it, Deno waits around forever for it to finish, instead of exiting.
-        await esbuild.stop()
     }
 
 }
