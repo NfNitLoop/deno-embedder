@@ -1,4 +1,15 @@
 {
+    "name": "@nfnitloop/deno-embedder-example-oak",
+    "version": "2.0.0-alpha-1",
+    "exports": {
+        ".": "./server.ts"
+    },
+    "publish": {
+        "exclude": [
+            "!browser/generated/**"
+        ]
+    },
+
     "unstable": [
         // Deno v2.4.0 introduces raw imports, but they're still unstable.
         // You'll need to use this flag until they get stabilized:
@@ -24,14 +35,18 @@
 
         // Since all your static files are now TypeScript code, they all get
         // included in the bundle created by `deno compile`! 🎉
-        "compile": "deno compile server.ts",
+        "compile": {
+            "command": "deno compile -N server.ts",
+            "dependencies": ["build"]
+        },
 
         // The simplest way to regenerate files is to just run your project in
         // "dev" mode, above, but you also have the option to just do a one-off
         // "build" of the embedded files like this:
-        "build-embeds": "./embedder.ts build",
+        "build": "./embedder.ts build",
 
-        "check": "deno check server.ts browserCode/app.ts"
+        "check": "deno check server.ts browser/src/app.ts && deno task check:publish",
+        "check:publish": "deno publish --unstable-raw-imports --dry-run"
     },
     "compilerOptions": {
         "lib": [

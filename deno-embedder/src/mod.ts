@@ -19,6 +19,7 @@ import { StaticConverter } from "./converters/oldStatic.ts";
 import { PluginConverter } from "./converters/oldPlugin.ts";
 import type { Plugin } from "./plugins/plugins.ts";
 import { SimpleConverter } from "./simple/converter.ts";
+import { DenoBundleConverter } from "./bundle/converter.ts";
 
 
 const VERSION = "1.0.0"
@@ -26,7 +27,7 @@ const VERSION = "1.0.0"
 /**
  * Configures a mapping from an input "source" dir, to an output destination.
  */
-export type Mapping = LegacyMapping | StaticDir
+export type Mapping = LegacyMapping | StaticDir | DenoBundle
 
 /**
  * This type just adds a `dir.ts` entry to your existing directory of static files.
@@ -43,6 +44,55 @@ export type StaticDir = {
      * We'll create `dir.ts` files here.
      */
     path: string
+}
+
+/**
+ * Run `deno bundle` on some code and 
+ */
+export type DenoBundle = {
+    type: "denoBundle"
+
+    /**
+     * Where the code for your browser is located.
+     */
+    sourceDir: string,
+
+    /**
+     * Where to save the bundled, embedded files.
+     * 
+     * Note, this directory will be emptied each time you regenerate files.
+     */
+    outDir: string,
+
+    /**
+     * One or more "entrypoints" into your bundled code. 
+     * 
+     * These are resolved relative to sourceDir.
+     */
+    entrypoints: [string, ...string[]]
+
+    /**
+     * Should we minify the bundled code?
+     * 
+     * If unspecified, we try to choose a good default.
+     * If sourceMap is enabled, minify defaults to "true", since you can view the source via the map.
+     * If sourceMap is not enabled, minify defaults to "false" to help with debugging.
+     */
+    minify?: boolean
+
+    /**
+     * Only bundling for the browser is supported at the moment. 
+     * 
+     * Please open an issue if you have a different use case.
+     * 
+     * @default "browser"
+     */
+    platform?: "browser"
+
+    /**
+     * If set, generate source maps for the generated code.
+     */
+    sourceMap?: "linked" | "inline" | "external"
 }
 
 /**
@@ -71,6 +121,13 @@ function converterFor(baseDir: string, opts: Mapping) {
     if (opts.type == "staticDir") {
         return new SimpleConverter({
             rootDir: path.resolve(baseDir, opts.path)
+        })
+    }
+
+    if (opts.type == "denoBundle") {
+        return new DenoBundleConverter({
+            ...opts,
+            rootDir: baseDir
         })
     }
 

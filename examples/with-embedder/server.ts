@@ -1,7 +1,9 @@
 import { serveDir, oak } from "@nfnitloop/deno-embedder/helpers/oak"
+import sarcasm from "./browser/src/sarcasm.ts";
+
+// Generated "directory" views of embedded files:
+import bundledJs from "./browser/generated/dir.ts"
 import staticFiles from "./static/dir.ts"
-import bundledJs from "./embed/code/dir.ts"
-import sarcasm from "./browserCode/sarcasm.ts";
 
 const router = new oak.Router()
 
@@ -23,6 +25,13 @@ router.get("/text", async (ctx) => {
 
 
 const app = new oak.Application()
+app.use(async (ctx, next) => {
+    await next()
+    const {method, url} = ctx.request
+    const {status} = ctx.response
+    console.log(`${status} ${method} ${url.pathname}`)
+})
+
 app.use(router.routes())
 app.use(router.allowedMethods())
 

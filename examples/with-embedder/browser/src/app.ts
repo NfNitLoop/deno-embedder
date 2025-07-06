@@ -3,6 +3,7 @@
 // any network requests.
 import sarcasm from "./sarcasm.ts"
 import { confetti } from "./deps.ts"
+import text from "./texts/en.txt" with { type: "text" }
 
 import { 
     CurrentArchitecture,
@@ -26,7 +27,7 @@ function onClick() {
     if (firstH1 == null) {
         console.warn("Couldn't find an H1 to update")
     } else {
-        firstH1.innerText = sarcasm(firstH1.innerText)
+        firstH1.innerText = sarcasm(text)
     }
 
     confetti()

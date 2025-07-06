@@ -1,22 +1,13 @@
 Example: With Embedder
 ======================
 
-The main benefits here when compared to [the version without Deno Embedder][1]
-are that:
-
- * Static files are embedded as .ts files, like the rest of your Deno code.
- * They'll be included in the output of `deno compile` and installed with
-   `deno install`.
- * No `--allow-read` access necessary in your application.  
-   (Though, of course, Deno Embedder itself will need read and write access
-   to translate the files into their embedded versions.)
+This example demonstrates:
+ * Embedding static files in-place by adding a `dir.ts`.
+ * Bundling code for the browser, and embedding that.
+ * Re-using some of that same browser code on the server.
 
 
-But additionally, we've added:
-
- * ESBuild bundling of TypeScript code! 🎉
-
-[1]: ../without-embedder/
+TODO: Rewrite me to document the benefits over "without-embedder" in the wake of the Deno 2.4 release.
 
 
 Running
@@ -26,9 +17,9 @@ You can run this example in a few ways:
 
 1. For local development, run `deno task dev` from this directory.
 
-2. You can also just:
-   `deno run jsr:@nfnitloop/deno-embedder/examples/with-embedder`
+2. Or, to try it out without Git, you can just:  
+   `deno run -N jsr:@nfnitloop/deno-embedder-example-oak`
 
 
 3. Check out this dir and run `deno task compile` to build a self-contained
-   executable, then run that.
+   executable, then run `./server`.

@@ -1,13 +1,6 @@
 #!/usr/bin/env -S deno run --check -A
 
-
 import * as embedder from "@nfnitloop/deno-embedder"
-import { ESBuild } from "@nfnitloop/deno-embedder/plugins/esbuild"
-
-// Example:
-// import * as embedder from "jsr:@nfnitloop/deno-embedder@1.4.9"
-// import { ESBuild } from "jsr:@nfnitloop/deno-embedder@1.4.9/plugins/esbuild/"
-
 
 export const options: embedder.Options = {
     importMeta: import.meta,
@@ -17,16 +10,17 @@ export const options: embedder.Options = {
             type: "staticDir",
             path: "static",
         },
-        // Code too! :D
         {
-            sourceDir: "browserCode",
-            destDir: "embed/code",
-            plugin: new ESBuild({
-                entryPoints: ["app.ts"],
-            })
+            type: "denoBundle",
+            sourceDir: "browser/src",
+            outDir: "browser/generated",
+            entrypoints: [
+                "app.ts",
+                "sarcasm.ts",
+            ],
+            sourceMap: "linked",
         }
     ]
-
 }
 
 if (import.meta.main) {

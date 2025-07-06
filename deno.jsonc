@@ -15,7 +15,7 @@
     ],
 
     "tasks": {
-        "test": {
+        "workspace:test": {
             "command": "cd deno-embedder && DENO_JOBS=1 deno task test"
         }
     },

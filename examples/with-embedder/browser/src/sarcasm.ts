@@ -1,5 +1,4 @@
-// This code can be used locally (i.e.: server-side) and in the browser, thanks
-// to the ESBuild plugin. :)
+// This code can be used locally (i.e.: server-side) and in the browser :)
 
 export default function sarcasm(text: string) {
     // Probably not unicode-safe, just a dumb function to demo.
