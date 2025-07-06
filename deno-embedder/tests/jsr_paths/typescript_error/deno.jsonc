@@ -1,0 +1,6 @@
+{
+    "name": "@nfnitloop/deno-embedder-test-typescript-error",
+    "exports": {
+        ".": "./mod.ts"
+    }
+}

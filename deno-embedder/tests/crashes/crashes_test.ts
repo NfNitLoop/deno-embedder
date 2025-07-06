@@ -7,14 +7,16 @@
  * @module
  */
 
-import { exists } from "jsr:@std/fs"
 import {delay} from "jsr:@std/async"
 import {assert} from "jsr:@std/assert"
+import { $ } from "@david/dax"
 
-const lockFile = "sample/lock"
-const sampleProject = "sample"
+const thisDir = $.path(import.meta.url).parentOrThrow()
 
-const testFile = "sample/static/example.ts"
+const sampleProject = thisDir.resolve("sample")
+const lockFile = sampleProject.resolve("lock")
+
+const testFile = sampleProject.resolve("static", "example.ts")
 const exampleCode = `
 export default function greet() {
     console.log("Hello, world!")
@@ -22,16 +24,16 @@ export default function greet() {
 `.trim()
 
 Deno.test(async function crashTest() {
-    if (await exists(lockFile)) {
+    if (await lockFile.exists()) {
         console.warn("Lock file already exists.")
-        await Deno.remove(lockFile)
+        await lockFile.remove()
     }
 
-    await Deno.writeTextFile(testFile, exampleCode)
+    await testFile.writeText(exampleCode)
 
     const cmd = new Deno.Command("deno", {
         args: ["task", "dev"],
-        cwd: sampleProject
+        cwd: sampleProject.toString()
     })
     await using proc = cmd.spawn()
     let status: Deno.CommandStatus|null = null
@@ -40,13 +42,13 @@ Deno.test(async function crashTest() {
     })
 
     await retry("Lock file should have been created.", async () => {
-        return await exists(lockFile)
+        return await lockFile.exists()
     })
     assert(!status, "Process should still be running")
 
     // Now let's break the file
     console.log("Writing invalid typescript")
-    await Deno.writeTextFile(testFile, exampleCode + "}")
+    await testFile.writeText(exampleCode + "}")
 
     // deno-lint-ignore require-await
     await retry("Embedder should crash due to invalid TS.", async () => {
@@ -54,7 +56,7 @@ Deno.test(async function crashTest() {
     })
 
     // If this hasn't been cleaned up, then the inner process is still running.
-    assert(!(await exists(lockFile)), "Lock file should be cleaned up")
+    assert(!(await lockFile.exists()), "Lock file should be cleaned up")
 })
 
 async function retry(message: string, cb: () => Promise<boolean>) {

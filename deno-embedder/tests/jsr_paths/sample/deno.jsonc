@@ -1,5 +1,5 @@
 {
-    "name": "@nfnitloop/sample-deno-embed-publish",
+    "name": "@nfnitloop/deno-embed-tests-jsr-paths-sample",
     "version": "0.0.1-rc1",
     "exports": {
         ".": "./src/mod.ts"

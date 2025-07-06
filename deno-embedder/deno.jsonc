@@ -1,0 +1,94 @@
+{
+    "name": "@nfnitloop/deno-embedder",
+    "version": "2.0.0-alpha-1",
+    "exports": {
+        ".": "./src/mod.ts",
+        "./plugins/plugins": "./src/plugins/plugins.ts",
+        "./plugins/esbuild": "./src/plugins/esbuild.ts",
+        "./helpers/oak": "./src/helpers/oak.ts",
+        "./helpers/hono": "./src/helpers/hono.ts",
+
+        // Needs to be exposed so that embedded files can import w/ JSR syntax. You shouldn't use this directly.
+        "./embed.ts": "./src/embed.ts"
+    },
+    "publish": {
+        "include": [
+            "README.md",
+            "src/**/*.ts",
+        ]
+    },
+
+    // WARNING!
+    // AFAIK, these task dependencies are declared properly. (And in fact, a bit conservatively to keep things simple)
+    // However, when run in parallel, I get errors that very much make it seem like dependency tasks haven't finished
+    // before running the next task.
+    // BUT, with the current state of the output of `deno task` when running parallel tasks, it's difficult to verify/debug this.
+    // TODO: Once better logging is implemented, come back and try to debug this again:
+    // See: https://github.com/denoland/deno/issues/27647
+    // Until then, run tasks with `DENO_JOBS=1 deno task ...`
+    "tasks": {
+        "test": {
+            "description": "Run the full test suite. Use DENO_JOBS=1",
+            "command": "deno test -A",
+            "dependencies": [
+                "check",
+                "test:jsx",
+            ]
+        },
+
+        // Since this directory has its own deno.jsonc, we need to test it explicitly:
+        "test:jsx": {
+            "command": "cd tests/jsx_config && deno test -A",
+        },
+
+
+
+        "check": {
+            "command": "echo Task check 'done'",
+            "dependencies": [
+                "check:main",
+                "check:publish",
+                "lints",
+            ],
+        },
+        "check:main": {
+            "command": "./tools/with-exports.ts deno check --doc",
+        },
+        "check:publish": {
+            "command": "deno publish --dry-run --allow-dirty",
+        },
+        "check:without-embedder": {
+            "command": "cd examples/without-embedder; deno task check",
+        },
+
+        "lints": {
+            "command": "deno lint",
+            "dependencies": ["lints:docs"],
+        },
+        "lints:docs": {
+            "command": "./tools/with-exports.ts deno doc --lint",
+        }
+    },
+    "lint": {
+        "rules": {
+            "exclude": [
+                // See: https://github.com/denoland/deno_lint/issues/1125
+                "prefer-const"
+            ]
+        },
+        "exclude": [
+            "tests/jsr_paths/typescript_error",
+            "tests/jsr_paths/spaces_error",
+            // `deno lint` seems to think this is a .d.ts file.
+            "tests/jsr_paths/sample/static/foobar_.d.ts_.ts"
+        ]
+    },
+    "test": {
+        "exclude": [
+            // Has example code that references theoretical modules:
+            "README.md",
+            // Pseudocode doc block example:
+            "src/helpers/hono.ts"
+        ]
+    },
+}

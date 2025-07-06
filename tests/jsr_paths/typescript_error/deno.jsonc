@@ -1,7 +1,0 @@
-{
-    "name": "@nfnitloop/sample-deno-embed-publish",
-    "version": "0.0.1-rc1",
-    "exports": {
-        ".": "./mod.ts"
-    }
-}
