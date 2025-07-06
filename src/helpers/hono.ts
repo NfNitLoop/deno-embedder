@@ -28,17 +28,12 @@ export function serveStatic<E extends Env = Env>(
     options: Omit<ServeStaticOptions<E>, "root"> & { root: Embeds }
 ): MiddlewareHandler {
     const { root, ...rest } = options;
-    return function serveStatic(c, next) {
-        const getContent = async (path: string) => {
-            try {
-                const file = await root.get(path);
-                return file ? file.bytes() : null;
-            } catch (e) {
-                console.warn(`${e}`);
-                return null;
-            }
-        };
-        
+    const getContent = async (path: string): Promise<ArrayBuffer | null> => {
+        const file = await root.get(path);
+        if (!file) { return null }
+        return (await file.bytes()).buffer
+    };
+    return function serveStaticImpl(c, next) {        
         // note: baseServeStatic gives us mime type headers automatically. Nice.
         return baseServeStatic({
             ...rest,

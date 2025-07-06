@@ -23,15 +23,32 @@ export type ImportMeta = {
 
 const decoder = new TextDecoder()
 
+/** A reference to an embedded file's data and metadata. */
+export type FileHandle = {
+    /** Size of the embedded file in bytes (uncomrpessed/unencoded) */
+    readonly size: number
+
+    /** Returns the raw bytes of the embedded file. */
+    bytes(): Promise<Uint8Array<ArrayBuffer>>;
+
+    /**
+     * Parse the bytes as utf-8 text.
+     */
+    text(): Promise<string>;
+}
+
 /**
  * Represents the contents of a file that's been embedded into TypeScript.
  */
-export class File {
+export class File implements FileHandle {
     /** Size of the embedded file in bytes (uncomrpessed/unencoded) */
     readonly size: number
 
     /** May be compressed */
-    #contents: {bytes: Uint8Array, compression: CompressionFormat | undefined }
+    #contents: {
+        bytes: Uint8Array<ArrayBuffer>, 
+        compression: CompressionFormat | undefined
+    }
 
 
     /** Called (indirectly) by each embedded file. */
@@ -46,7 +63,7 @@ export class File {
     }
 
     /** Returns the raw bytes of the embedded file. */
-    async bytes(): Promise<Uint8Array> {
+    async bytes(): Promise<Uint8Array<ArrayBuffer>> {
         let {bytes, compression} = this.#contents
 
         // Decompress on first use:
@@ -109,7 +126,7 @@ export type CompressionFormat = ConstructorParameters<typeof DecompressionStream
 /** Shortcut for `new File(opts)` */
 export function F(opts: FileMeta): File { return new File(opts) }
 
-async function decompress(data: Uint8Array, compression: CompressionFormat): Promise<Uint8Array> {
+async function decompress(data: Uint8Array, compression: CompressionFormat): Promise<Uint8Array<ArrayBuffer>> {
     let input = new Blob([data])
     let ds = new DecompressionStream(compression)
     let stream = input.stream().pipeThrough(ds)
