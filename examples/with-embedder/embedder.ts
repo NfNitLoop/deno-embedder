@@ -1,22 +1,21 @@
-// NOTE: These are relative paths because the source code for deno-embedder
-// lives in the same repository as this example. You should import these from
-// `jsr:@nfnitloop/deno-embedder@version`
-//
-import * as embedder from "../../src/mod.ts"
-import { ESBuild } from "../../src/plugins/esbuild.ts"
+#!/usr/bin/env -S deno run --check -A
+
+
+import * as embedder from "@nfnitloop/deno-embedder"
+import { ESBuild } from "@nfnitloop/deno-embedder/plugins/esbuild"
 
 // Example:
 // import * as embedder from "jsr:@nfnitloop/deno-embedder@1.4.9"
 // import { ESBuild } from "jsr:@nfnitloop/deno-embedder@1.4.9/plugins/esbuild/"
 
 
-export const options = {
+export const options: embedder.Options = {
     importMeta: import.meta,
 
     mappings: [
         {
-            sourceDir: "static",
-            destDir: "embed/static"
+            type: "staticDir",
+            path: "static",
         },
         // Code too! :D
         {
@@ -29,7 +28,6 @@ export const options = {
     ]
 
 }
-export {embedder}
 
 if (import.meta.main) {
     await embedder.main({options})

@@ -180,8 +180,8 @@ export class Embeds<K extends string = string> {
     * This method can be used to retrieve the keys of the embed files for 
     * iteration or other purposes.
     */
-    list(): Array<K> {
-        return Object.keys(this.#embeds) as Array<K>;
+    listFiles(): K[] {
+        return Object.keys(this.#embeds) as K[];
     }
 
     /**

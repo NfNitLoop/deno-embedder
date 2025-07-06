@@ -10,6 +10,10 @@
         "examples/with-embedder"
     ],
 
+    "unstable": [
+        "raw-imports"
+    ],
+
     "tasks": {
         "test": {
             "command": "cd deno-embedder && DENO_JOBS=1 deno task test"

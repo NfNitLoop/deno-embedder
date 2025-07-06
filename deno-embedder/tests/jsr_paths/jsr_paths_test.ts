@@ -10,7 +10,7 @@
  * @module
  */
 
-import * as dax from "jsr:@david/dax@0.41"
+import * as dax from "@david/dax"
 import { assertStringIncludes, assertNotEquals } from "jsr:@std/assert"
 
 const $ = dax.build$({

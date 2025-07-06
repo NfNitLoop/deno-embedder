@@ -148,21 +148,3 @@ if (!file) {
 }
 ```
 
-ESBuild Plugin
---------------
-
-The ESBuild plugin will change the behavior of Deno Embedder to first bundle
-the files in the source directory, then embed the results of that bundling.
-
-This allows you to easily:
- * Write TypeScript, run it in the browser.
- * Use the same TypeScript file in the browser and Deno 
-   (provided you don't use anything Deno-specific.)
- * Use remote dependencies in browser code.
-   Any remote dependencies are *automatically* bundled, efficiently
-   and quickly from the Deno cache.
-
-See the [demo embedder.ts] file for an example.
-
-[demo embedder.ts]: ./examples/with-embedder/embedder.ts
-

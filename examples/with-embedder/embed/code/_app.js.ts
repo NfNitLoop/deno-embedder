@@ -1,4 +1,4 @@
-import {F} from "../../../../src/embed.ts"
+import {F} from "../../../../deno-embedder/src/embed.ts"
 export default F({
  size: 32704,
  compression: "gzip",

@@ -5,7 +5,7 @@
  */
 import * as oak from "@oak/oak"
 import type { Context as OakContext, Router as OakRouter } from "@oak/oak"
-import type { Embeds } from "../embed.ts"
+import type { Directory } from "../embedTypes.ts"
 
 import { typeByExtension } from "@std/media-types"
 import { extname } from "@std/path"
@@ -25,7 +25,7 @@ export type { OakRouter, OakContext }
  * 
  * Ex: `serveDir(router, "/static/", staticFiles)`
  */
-export function serveDir(router: oak.Router, urlPath: ServerDirPath, embeds: Embeds): void {
+export function serveDir(router: oak.Router, urlPath: ServerDirPath, embeds: Directory): void {
     if (!urlPath.endsWith("/")) {
         throw new Error(`URL Path must end with "/":  ${urlPath}`)
     }
@@ -54,7 +54,7 @@ export type ServerDirPath = "/" | `/${string}/`
  */
 export async function serveFile(
     ctx: oak.Context,
-    embeds: Embeds,
+    embeds: Directory,
     filePath: string,
     next?: () => Promise<unknown>,
 ): Promise<unknown> {

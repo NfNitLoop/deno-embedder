@@ -1,12 +1,14 @@
 {
-    "name": "@nfnitloop/deno-embed-tests-jsr-paths-sample",
-    "version": "0.0.1-rc1",
-    "exports": {
-        ".": "./src/mod.ts"
-    },
+    // Publish so that we can do a publish dry-run. 
     "publish": {
         "include": [
             "src"
         ]
+    },
+    // But now we've got to have these as well: 
+    "name": "@nfnitloop/deno-embed-tests-jsr-paths-sample",
+    "version": "0.0.1-rc1",
+    "exports": {
+        ".": "./src/mod.ts"
     }
 }

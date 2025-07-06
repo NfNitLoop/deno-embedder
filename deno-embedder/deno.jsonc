@@ -8,6 +8,14 @@
         "./helpers/oak": "./src/helpers/oak.ts",
         "./helpers/hono": "./src/helpers/hono.ts",
 
+        "./embedTypes": "./src/embedTypes.ts",
+
+        // Different loaders for different types of embedded directories:
+        "./simple/loader": "./src/simple/loader.ts",
+
+        // TODO: I think we can remove this? This was so that we could automatically 
+        // depend on either JSR or local code. But workspaces simplifies this.
+        //
         // Needs to be exposed so that embedded files can import w/ JSR syntax. You shouldn't use this directly.
         "./embed.ts": "./src/embed.ts"
     },

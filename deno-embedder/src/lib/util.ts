@@ -5,6 +5,8 @@
 
 import { join as pathJoin } from "@std/path";
 
+// TODO: path has a walk() method, use that.
+
 /** Read all files from a directory tree, recursively.  */
 export async function * recursiveReadDir(dir: string): AsyncGenerator<Deno.DirEntry> {
     for await (let entry of Deno.readDir(dir)) {
