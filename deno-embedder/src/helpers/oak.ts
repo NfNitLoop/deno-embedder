@@ -3,10 +3,12 @@
  * 
  * @module
  */
-import * as oak from "../deps/oak.ts"
-import type { Context as OakContext, Router as OakRouter } from "../deps/oak.ts"
-import { lookup } from "../deps/std/media_types.ts";
+import * as oak from "@oak/oak"
+import type { Context as OakContext, Router as OakRouter } from "@oak/oak"
 import type { Embeds } from "../embed.ts"
+
+import { typeByExtension } from "@std/media-types"
+import { extname } from "@std/path"
 
 /**
  * Re-exported `oak` so you can depend on it to make sure you use the same version.
@@ -69,4 +71,9 @@ export async function serveFile(
         ctx.response.headers.set("Content-Type", mimeType)
     }
     ctx.response.body = await file.bytes()
+}
+
+function lookup(filePath: string) {
+    const ext = extname(filePath)
+    return typeByExtension(ext)
 }

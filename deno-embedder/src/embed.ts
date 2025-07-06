@@ -5,9 +5,12 @@
  * @module
  */
 
-import {decodeBase64} from "./deps/std/encoding/base64.ts";
+import {decodeBase64 as upstream} from "@std/encoding/base64"
 
-
+// Fix type. (v1.0 has a breaking change to encoding/decoding.)
+function decodeBase64(value: string): Uint8Array<ArrayBuffer> {
+    return upstream(value) as Uint8Array<ArrayBuffer>
+}
 
 // This is a type, not a var. It's used in a JSDoc {@link} below.
 // deno-lint-ignore no-unused-vars

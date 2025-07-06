@@ -91,4 +91,14 @@
             "src/helpers/hono.ts"
         ]
     },
+    "imports": {
+        "@cliffy/command": "jsr:@cliffy/command@1.0.0-rc.4",
+        "@hono/hono": "jsr:@hono/hono@^4.8.4",
+        "@oak/oak": "jsr:@oak/oak@16.0.0",
+        "@std/async": "jsr:@std/async@0.196.0",
+        "@std/encoding": "jsr:@std/encoding@0.224.0",
+        "@std/fs": "jsr:@std/fs@0.229.1",
+        "@std/media-types": "jsr:@std/media-types@0.224.0",
+        "@std/path": "jsr:@std/path@0.225.2"
+    },
 }

@@ -12,12 +12,12 @@
  * @module
  */
 
-import { debounce, deferred } from "./deps/std/async.ts";
-import * as path from "./deps/std/path.ts";
-import { exists } from "./deps/std/fs.ts";
-import { encodeBase64 } from "./deps/std/encoding/base64.ts"
+import { debounce, deferred } from "@std/async";
+import * as path from "@std/path";
+import { exists } from "@std/fs";
+import { encodeBase64 } from "@std/encoding/base64"
 
-import { Command } from "./deps/cliffy/command.ts";
+import { Command } from "@cliffy/command";
 
 
 import * as embed from "./embed.ts"

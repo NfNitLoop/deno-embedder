@@ -5,13 +5,12 @@
  */
 
 // adapted from https://jsr.io/@hono/hono/4.4.7/src/adapter/deno/serve-static.ts
-import type {
-    ServeStaticOptions,
-    Env,
-    MiddlewareHandler,
-    Hono
-} from "../deps/hono.ts";
-import { serveStatic as baseServeStatic } from "../deps/hono.ts";
+
+import type { Hono } from "@hono/hono";
+import type { ServeStaticOptions } from "@hono/hono/serve-static";
+import { serveStatic as baseServeStatic } from "@hono/hono/serve-static";
+import type { Env, MiddlewareHandler } from "@hono/hono/types";
+
 import type { Embeds } from "../embed.ts";
 
 /**
